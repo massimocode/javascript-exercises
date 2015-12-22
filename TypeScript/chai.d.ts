@@ -385,5 +385,3 @@ declare module "chai" {
 interface Object {
     should: Chai.Assertion;
 }
-
-declare var expect: Chai.ExpectStatic;

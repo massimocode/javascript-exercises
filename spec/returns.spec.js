@@ -1,5 +1,6 @@
 'use strict';
 
+let expect = require('chai').expect;
 let returns = require('../lib/returns');
 
 describe('Returns', function () {

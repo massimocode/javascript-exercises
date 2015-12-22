@@ -1,5 +1,6 @@
 'use strict';
 
+let expect = require('chai').expect;
 let fizzbuzz = require('../lib/fizzbuzz');
 
 describe('FizzBuzz', function () {

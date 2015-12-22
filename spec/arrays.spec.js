@@ -1,5 +1,6 @@
 'use strict';
 
+let expect = require('chai').expect;
 let arrays = require('../lib/arrays');
 
 describe('Arrays', function () {
