@@ -48,6 +48,13 @@ describe('Arrays', function () {
             expect(array).to.deep.equal(["a", "b", "c", 4]);
         });
 
+        it('Given [] and 4, it should add 4 to the end of the array and should return true', function () {
+            var array = [];
+            var wasItemAdded = arrays.addItemToEndOfArray(array, 4);
+            expect(wasItemAdded).to.be.true;
+            expect(array).to.deep.equal([4]);
+        });
+
         it('Given null and 4, it should return false', function () {
             var wasItemAdded = arrays.addItemToEndOfArray(null, 4);
             expect(wasItemAdded).to.be.false;
@@ -72,6 +79,13 @@ describe('Arrays', function () {
             var wasItemAdded = arrays.addItemToStartOfArray(array, 4);
             expect(wasItemAdded).to.be.true;
             expect(array).to.deep.equal([4, "a", "b", "c"]);
+        });
+
+        it('Given [] and 4, it should add 4 to the start of the array and should return true', function () {
+            var array = [];
+            var wasItemAdded = arrays.addItemToStartOfArray(array, 4);
+            expect(wasItemAdded).to.be.true;
+            expect(array).to.deep.equal([4]);
         });
 
         it('Given null and 4, it should return false', function () {
@@ -215,6 +229,13 @@ describe('Arrays', function () {
             var itemsRemoved = arrays.removeItemFromArray(array, 2);
             expect(itemsRemoved).to.equal(1);
             expect(array).to.deep.equal([1]);
+        });
+
+        it('Given [1, 1, 2, 3] and 1, it should remove 1 from the array and should return 2', function () {
+            var array = [1, 1, 2, 3];
+            var itemsRemoved = arrays.removeItemFromArray(array, 1);
+            expect(itemsRemoved).to.equal(2);
+            expect(array).to.deep.equal([2, 3]);
         });
 
         it('Given ["a", "b", "c", 4] and 4, it should remove 4 from the array and should return 1', function () {
