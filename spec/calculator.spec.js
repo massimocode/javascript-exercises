@@ -60,6 +60,48 @@ describe('Calculator', function () {
                 });
             });
 
+            describe('When adding 9', function () {
+                beforeEach(function () {
+                    calculator.add(9);
+                });
+
+                it('It should have a total of 14', function () {
+                    expect(calculator.getTotal()).to.equal(14);
+                });
+
+                it('It should report the history as expected', function () {
+                    expect(calculator.getHistory()).to.deep.equal(["ADD 5", "ADD 9"]);
+                });
+
+                describe('When undoing', function () {
+                    beforeEach(function () {
+                        calculator.undo();
+                    });
+
+                    it('It should have a total of 5', function () {
+                        expect(calculator.getTotal()).to.equal(5);
+                    });
+
+                    it('It should report the history as expected', function () {
+                        expect(calculator.getHistory()).to.deep.equal(["ADD 5"]);
+                    });
+
+                    describe('When undoing', function () {
+                        beforeEach(function () {
+                            calculator.undo();
+                        });
+
+                        it('It should have a total of 0', function () {
+                            expect(calculator.getTotal()).to.equal(0);
+                        });
+
+                        it('It should not have any history', function () {
+                            expect(calculator.getHistory()).to.deep.equal([]);
+                        });
+                    });
+                });
+            });
+
             describe('When multiplying by 5', function () {
                 beforeEach(function () {
                     calculator.multiply(5);
@@ -71,6 +113,34 @@ describe('Calculator', function () {
 
                 it('It should report the history as expected', function () {
                     expect(calculator.getHistory()).to.deep.equal(["ADD 5", "MULTIPLY 5"]);
+                });
+
+                describe('When undoing', function () {
+                    beforeEach(function () {
+                        calculator.undo();
+                    });
+
+                    it('It should have a total of 5', function () {
+                        expect(calculator.getTotal()).to.equal(5);
+                    });
+
+                    it('It should report the history as expected', function () {
+                        expect(calculator.getHistory()).to.deep.equal(["ADD 5"]);
+                    });
+
+                    describe('When undoing', function () {
+                        beforeEach(function () {
+                            calculator.undo();
+                        });
+
+                        it('It should have a total of 0', function () {
+                            expect(calculator.getTotal()).to.equal(0);
+                        });
+
+                        it('It should not have any history', function () {
+                            expect(calculator.getHistory()).to.deep.equal([]);
+                        });
+                    });
                 });
             });
 
@@ -242,6 +312,20 @@ describe('Calculator', function () {
                 expect(calculator.getHistory()).to.deep.equal(["SUBTRACT 7"]);
             });
 
+            describe('When undoing', function () {
+                beforeEach(function () {
+                    calculator.undo();
+                });
+
+                it('It should have a total of 0', function () {
+                    expect(calculator.getTotal()).to.equal(0);
+                });
+
+                it('It should not have any history', function () {
+                    expect(calculator.getHistory()).to.deep.equal([]);
+                });
+            });
+
             describe('When multiplying by 8', function () {
                 beforeEach(function () {
                     calculator.multiply(8);
@@ -323,6 +407,20 @@ describe('Calculator', function () {
                     it('It should report the history as expected', function () {
                         expect(calculator.getHistory()).to.deep.equal(["SUBTRACT 7", "DIVIDE 0", "SUBTRACT 1"]);
                     });
+
+                    describe('When undoing', function () {
+                        beforeEach(function () {
+                            calculator.undo();
+                        });
+
+                        it('It should have a total of ERROR', function () {
+                            expect(calculator.getTotal()).to.equal("ERROR");
+                        });
+
+                        it('It should report the history as expected', function () {
+                            expect(calculator.getHistory()).to.deep.equal(["SUBTRACT 7", "DIVIDE 0"]);
+                        });
+                    });
                 });
 
                 describe('When multiplying by 2', function () {
@@ -336,6 +434,20 @@ describe('Calculator', function () {
 
                     it('It should report the history as expected', function () {
                         expect(calculator.getHistory()).to.deep.equal(["SUBTRACT 7", "DIVIDE 0", "MULTIPLY 2"]);
+                    });
+
+                    describe('When undoing', function () {
+                        beforeEach(function () {
+                            calculator.undo();
+                        });
+
+                        it('It should have a total of ERROR', function () {
+                            expect(calculator.getTotal()).to.equal("ERROR");
+                        });
+
+                        it('It should report the history as expected', function () {
+                            expect(calculator.getHistory()).to.deep.equal(["SUBTRACT 7", "DIVIDE 0"]);
+                        });
                     });
                 });
 
@@ -404,7 +516,7 @@ describe('Calculator', function () {
                         expect(calculator.getTotal()).to.equal("ERROR");
                     });
 
-                    it('It should not have any history', function () {
+                    it('It should report the history as expected', function () {
                         expect(calculator.getHistory()).to.deep.equal(["DIVIDE 0"]);
                     });
                 });
@@ -463,6 +575,160 @@ describe('Calculator', function () {
 
                 it('It should report the history as expected', function () {
                     expect(calculator.getHistory()).to.deep.equal([]);
+                });
+            });
+        });
+
+        describe('When adding 1', function () {
+            beforeEach(function () {
+                calculator.add(1);
+            });
+
+            it('It should have a total of 1', function () {
+                expect(calculator.getTotal()).to.equal(1);
+            });
+
+            it('It should report the history as expected', function () {
+                expect(calculator.getHistory()).to.deep.equal(["ADD 1"]);
+            });
+
+            describe('When multiplying by 0', function () {
+                beforeEach(function () {
+                    calculator.multiply(0);
+                });
+
+                it('It should have a total of 0', function () {
+                    expect(calculator.getTotal()).to.equal(0);
+                });
+
+                it('It should report the history as expected', function () {
+                    expect(calculator.getHistory()).to.deep.equal(["ADD 1", "MULTIPLY 0"]);
+                });
+
+                describe('When undoing', function () {
+                    beforeEach(function () {
+                        calculator.undo();
+                    });
+
+                    it('It should have a total of 1', function () {
+                        expect(calculator.getTotal()).to.equal(1);
+                    });
+
+                    it('It should report the history as expected', function () {
+                        expect(calculator.getHistory()).to.deep.equal(["ADD 1"]);
+                    });
+                });
+            });
+        });
+
+        describe('When adding 2', function () {
+            beforeEach(function () {
+                calculator.add(2);
+            });
+
+            it('It should have a total of 2', function () {
+                expect(calculator.getTotal()).to.equal(2);
+            });
+
+            it('It should report the history as expected', function () {
+                expect(calculator.getHistory()).to.deep.equal(["ADD 2"]);
+            });
+
+            describe('When raising to the power of 3', function () {
+                beforeEach(function () {
+                    calculator.power(3);
+                });
+
+                it('It should have a total of 8', function () {
+                    expect(calculator.getTotal()).to.equal(8);
+                });
+
+                it('It should report the history as expected', function () {
+                    expect(calculator.getHistory()).to.deep.equal(["ADD 2", "POWER 3"]);
+                });
+
+                describe('When undoing', function () {
+                    beforeEach(function () {
+                        calculator.undo();
+                    });
+
+                    it('It should have a total of 2', function () {
+                        expect(calculator.getTotal()).to.equal(2);
+                    });
+
+                    it('It should report the history as expected', function () {
+                        expect(calculator.getHistory()).to.deep.equal(["ADD 2"]);
+                    });
+                });
+            });
+        });
+
+        describe('When adding 2', function () {
+            beforeEach(function () {
+                calculator.add(2);
+            });
+
+            it('It should have a total of 2', function () {
+                expect(calculator.getTotal()).to.equal(2);
+            });
+
+            it('It should report the history as expected', function () {
+                expect(calculator.getHistory()).to.deep.equal(["ADD 2"]);
+            });
+
+            describe('When dividing by 0', function () {
+                beforeEach(function () {
+                    calculator.divide(0);
+                });
+
+                it('It should report the total as ERROR', function () {
+                    expect(calculator.getTotal()).to.equal("ERROR");
+                });
+
+                it('It should report the history as expected', function () {
+                    expect(calculator.getHistory()).to.deep.equal(["ADD 2", "DIVIDE 0"]);
+                });
+
+                describe('When dividing by 0', function () {
+                    beforeEach(function () {
+                        calculator.divide(0);
+                    });
+
+                    it('It should report the total as ERROR', function () {
+                        expect(calculator.getTotal()).to.equal("ERROR");
+                    });
+
+                    it('It should report the history as expected', function () {
+                        expect(calculator.getHistory()).to.deep.equal(["ADD 2", "DIVIDE 0", "DIVIDE 0"]);
+                    });
+
+                    describe('When undoing', function () {
+                        beforeEach(function () {
+                            calculator.undo();
+                        });
+
+                        it('It should report the total as ERROR', function () {
+                            expect(calculator.getTotal()).to.equal("ERROR");
+                        });
+
+                        it('It should report the history as expected', function () {
+                            expect(calculator.getHistory()).to.deep.equal(["ADD 2", "DIVIDE 0"]);
+                        });
+
+                        describe('When undoing', function () {
+                            beforeEach(function () {
+                                calculator.undo();
+                            });
+
+                            it('It should report the total as 2', function () {
+                                expect(calculator.getTotal()).to.equal(2);
+                            });
+
+                            it('It should report the history as expected', function () {
+                                expect(calculator.getHistory()).to.deep.equal(["ADD 2"]);
+                            });
+                        });
+                    });
                 });
             });
         });
