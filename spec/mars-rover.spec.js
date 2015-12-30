@@ -330,7 +330,7 @@ describe('Mars Rover', function () {
             });
         });
     });
-    
+
     describe('Given a new Mars Rover with no obstacles, but with bounds', function () {
         let marsRover;
         beforeEach(function () {
@@ -655,25 +655,85 @@ describe('Mars Rover', function () {
                 });
             });
         });
-        
+
         describe('Commands causing the rover to run outside the world', function () {
-            describe('Given the rover moves north 11 squares on a world that is 5x10 squares', function () {
+            describe('Given the rover moves forwards north 10 squares on a world that is 5x10 squares', function () {
                 beforeEach(function () {
-                    marsRover.command('FFFFFFFFFFF');
+                    marsRover.command('FFFFFFFFFF');
                 });
-                
-                it('Its position should be 0, 1, N', function () {
-                    expect(marsRover.getPosition()).to.equal('0, 1, N');
+
+                it('Its position should be 0, 0, N', function () {
+                    expect(marsRover.getPosition()).to.equal('0, 0, N');
+                });
+
+                describe('Given the rover moves forwards north once more', function () {
+                    beforeEach(function () {
+                        marsRover.command('F');
+                    });
+
+                    it('Its position should be 0, 1, N', function () {
+                        expect(marsRover.getPosition()).to.equal('0, 1, N');
+                    });
+                });
+            });
+
+            describe('Given the rover moves forwards east 5 squares on a world that is 5x10 squares', function () {
+                beforeEach(function () {
+                    marsRover.command('RFFFFF');
+                });
+
+                it('Its position should be 0, 0, E', function () {
+                    expect(marsRover.getPosition()).to.equal('0, 0, E');
+                });
+
+                describe('Given the rover moves forwards east once more', function () {
+                    beforeEach(function () {
+                        marsRover.command('F');
+                    });
+
+                    it('Its position should be 1, 0, E', function () {
+                        expect(marsRover.getPosition()).to.equal('1, 0, E');
+                    });
                 });
             });
             
-            describe('Given the rover moves east 6 squares on a world that is 5x10 squares', function () {
+            describe('Given the rover moves backwards north 10 squares on a world that is 5x10 squares', function () {
                 beforeEach(function () {
-                    marsRover.command('RFFFFFF');
+                    marsRover.command('RRBBBBBBBBBB');
                 });
-                
-                it('Its position should be 1, 0, E', function () {
-                    expect(marsRover.getPosition()).to.equal('1, 0, E');
+
+                it('Its position should be 0, 0, S', function () {
+                    expect(marsRover.getPosition()).to.equal('0, 0, S');
+                });
+
+                describe('Given the rover moves backwards north once more', function () {
+                    beforeEach(function () {
+                        marsRover.command('B');
+                    });
+
+                    it('Its position should be 0, 1, S', function () {
+                        expect(marsRover.getPosition()).to.equal('0, 1, S');
+                    });
+                });
+            });
+
+            describe('Given the rover moves backwards east 5 squares on a world that is 5x10 squares', function () {
+                beforeEach(function () {
+                    marsRover.command('LBBBBB');
+                });
+
+                it('Its position should be 0, 0, W', function () {
+                    expect(marsRover.getPosition()).to.equal('0, 0, W');
+                });
+
+                describe('Given the rover moves backwards east once more', function () {
+                    beforeEach(function () {
+                        marsRover.command('B');
+                    });
+
+                    it('Its position should be 1, 0, W', function () {
+                        expect(marsRover.getPosition()).to.equal('1, 0, W');
+                    });
                 });
             });
         });
@@ -706,7 +766,7 @@ describe('Mars Rover', function () {
                     });
                 });
             });
-            
+
             describe('And there is an obstacle behind it', function () {
                 beforeEach(function () {
                     marsRover.command('FFRFL');
@@ -740,7 +800,7 @@ describe('Mars Rover', function () {
                     });
                 });
             });
-            
+
             describe('And there is an obstacle behind it', function () {
                 beforeEach(function () {
                     marsRover.command('RRFFLFR');
@@ -774,7 +834,7 @@ describe('Mars Rover', function () {
                     });
                 });
             });
-            
+
             describe('And there is an obstacle behind it', function () {
                 beforeEach(function () {
                     marsRover.command('RFFLFR');
@@ -808,7 +868,7 @@ describe('Mars Rover', function () {
                     });
                 });
             });
-            
+
             describe('And there is an obstacle behind it', function () {
                 beforeEach(function () {
                     marsRover.command('FL');
