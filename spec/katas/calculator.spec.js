@@ -1,7 +1,7 @@
 'use strict';
 
 let expect = require('chai').expect;
-let Calculator = require('../lib/calculator');
+let Calculator = require('../../lib/katas/calculator');
 
 describe('Calculator', function () {
 

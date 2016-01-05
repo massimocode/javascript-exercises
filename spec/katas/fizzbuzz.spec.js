@@ -1,7 +1,7 @@
 'use strict';
 
 let expect = require('chai').expect;
-let fizzbuzz = require('../lib/fizzbuzz');
+let fizzbuzz = require('../../lib/katas/fizzbuzz');
 
 describe('FizzBuzz', function () {
 

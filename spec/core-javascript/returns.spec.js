@@ -1,7 +1,7 @@
 'use strict';
 
 let expect = require('chai').expect;
-let returns = require('../lib/returns');
+let returns = require('../../lib/core-javascript/returns');
 
 describe('Returns', function () {
 

@@ -1,7 +1,7 @@
 'use strict';
 
 let expect = require('chai').expect;
-let arrays = require('../lib/arrays');
+let arrays = require('../../lib/core-javascript/arrays');
 
 describe('Arrays', function () {
 

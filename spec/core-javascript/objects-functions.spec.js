@@ -1,7 +1,7 @@
 'use strict';
 
 let expect = require('chai').expect;
-let objectsAndFunctions = require('../lib/objects-functions');
+let objectsAndFunctions = require('../../lib/core-javascript/objects-functions');
 
 describe('Basic Objects', function () {
 

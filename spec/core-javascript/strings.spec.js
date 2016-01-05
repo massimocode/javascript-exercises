@@ -1,7 +1,7 @@
 'use strict';
 
 let expect = require('chai').expect;
-let strings = require('../lib/strings');
+let strings = require('../../lib/core-javascript/strings');
 
 describe('Strings', function () {
 

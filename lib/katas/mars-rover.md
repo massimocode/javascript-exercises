@@ -14,6 +14,7 @@ In order to control a rover, NASA sends a simple string of letters.
 The only commands you can give the rover are 'F', 'B', 'L' and 'R'.
 
 You must:
+- Create a constructor called MarsRover (as that is exported by the module). It can be a function or a class. It will be called with the new keyword to create a new Mars Rover.
 - Implement commands that move the rover forward/backward ('F', 'B'). The rover may only move forward/backward by one grid point, and must maintain the same heading.
 - Implement commands that turn the rover left/right ('L', 'R'). These commands make the rover spin 90 degrees left or right respectively, without moving from its current spot.
 - Implement wrapping from one edge of the grid to another. (Mars is a sphere after all).

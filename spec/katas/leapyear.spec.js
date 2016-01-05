@@ -1,7 +1,7 @@
 'use strict';
 
 let expect = require('chai').expect;
-let leapyear = require('../lib/leapyear');
+let leapyear = require('../../lib/katas/leapyear');
 
 describe('Leap Year', function () {
 

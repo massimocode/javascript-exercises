@@ -1,7 +1,7 @@
 'use strict';
 
 let expect = require('chai').expect;
-let MarsRover = require('../lib/mars-rover');
+let MarsRover = require('../../lib/katas/mars-rover');
 
 describe('Mars Rover', function () {
 

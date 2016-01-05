@@ -2,8 +2,8 @@
 
 let expect = require('chai').expect;
 let sinon = require('sinon');
-let constructs = require('../lib/constructs');
-let utils = require('../utils');
+let constructs = require('../../lib/core-javascript/constructs');
+let utils = require('../../utils');
 
 describe('Constructs', () => {
 
