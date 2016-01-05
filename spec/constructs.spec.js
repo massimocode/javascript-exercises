@@ -48,35 +48,97 @@ describe('Constructs', () => {
         });
 
         describe('getTypeOfDay function', () => {
+            let functionBody;
+
+            beforeEach(() => {
+                // Execute function for Wallaby to rerun these tests when the body of the function is changed.
+                constructs.getTypeOfDay('');
+                functionBody = utils.removeInstrumentation(constructs.getTypeOfDay.toString());
+            });
+
+            it('It should contain a switch statement', () => {
+                expect(functionBody).to.contain('switch');
+            });
+
+            it('It should not contain an if statement', () => {
+                expect(functionBody).to.not.contain('if');
+            });
+        });
+    });
+
+    describe('For Loop', () => {
+        describe('When summing an array of numbers', () => {
+            it('Given [1, 2, 3, 4] should return 10', () => {
+                expect(constructs.sumOfValuesUsingForLoop([1, 2, 3, 4])).to.equal(10);
+            });
+
+            it('Given [2, 3, 8] should return 18', () => {
+                expect(constructs.sumOfValuesUsingForLoop([2, 3, 8])).to.equal(13);
+            });
+        });
+
+        describe('sumOfValuesUsingForLoop function', () => {
+            let functionBody;
             
             beforeEach(() => {
                 // Execute function for Wallaby to rerun these tests when the body of the function is changed.
                 constructs.getTypeOfDay('');
+                functionBody = utils.removeInstrumentation(constructs.sumOfValuesUsingForLoop.toString());
             });
             
-            it('It should contain a switch statement', () => {
-                expect(constructs.getTypeOfDay.toString()).to.contain('switch');
+            it('It should contain a for loop', () => {
+                expect(functionBody).to.contain('for');
             });
 
-            it('It should not contain an if statement', () => {
-                expect(constructs.getTypeOfDay.toString()).to.not.contain('if');
+            it('It should not contain a while loop', () => {
+                expect(functionBody).not.to.contain('while');
             });
         });
     });
-    
-    describe('Continue statement', () => {
-        
-        describe('When validating and creating a list of customers', () => {
+
+    describe('While Loop', () => {
+        describe('When summing an array of numbers', () => {
+            it('Given [1, 2, 3, 4] should return 10', () => {
+                expect(constructs.sumOfValuesUsingWhileLoop([1, 2, 3, 4])).to.equal(10);
+            });
+
+            it('Given [2, 3, 8] should return 18', () => {
+                expect(constructs.sumOfValuesUsingWhileLoop([2, 3, 8])).to.equal(13);
+            });
+        });
+
+        describe('sumOfValuesUsingWhileLoop function', () => {
+            let functionBody;
             
+            beforeEach(() => {
+                // Execute function for Wallaby to rerun these tests when the body of the function is changed.
+                constructs.getTypeOfDay('');
+                functionBody = utils.removeInstrumentation(constructs.sumOfValuesUsingWhileLoop.toString());
+            });
+            
+            it('It should contain a for loop', () => {
+                expect(functionBody).not.to.contain('for');
+            });
+
+            it('It should not contain a while loop', () => {
+                expect(functionBody).to.contain('while');
+            });
+        });
+    });
+
+    describe('Continue statement', () => {
+
+        describe('When validating and creating a list of customers', () => {
+
             describe('When all of the customers are valid', () => {
                 let customers, validateSpy, saveSpy;
                 beforeEach(() => {
                     customers = [
-                        {id: 1},
-                        {id: 2},
-                        {id: 3},
-                        {id: 4},
-                        {id: 5}
+                        { id: 1 },
+                        { id: 2 },
+                        { id: 3 },
+                        { id: 4 },
+                        { id: 5 }
                     ];
                     validateSpy = sinon.spy(function () {
                         return true;
@@ -84,7 +146,7 @@ describe('Constructs', () => {
                     saveSpy = sinon.spy(function () { });
                     constructs.validateAndCreateCustomers(customers, validateSpy, saveSpy);
                 });
-                
+
                 it('It should validate all of the customers', () => {
                     expect(validateSpy).to.have.been.calledWith(customers[0]);
                     expect(validateSpy).to.have.been.calledWith(customers[1]);
@@ -92,7 +154,7 @@ describe('Constructs', () => {
                     expect(validateSpy).to.have.been.calledWith(customers[3]);
                     expect(validateSpy).to.have.been.calledWith(customers[4]);
                 });
-                
+
                 it('It should save all of the customers', () => {
                     expect(saveSpy).to.have.been.calledWith(customers[0]);
                     expect(saveSpy).to.have.been.calledWith(customers[1]);
@@ -101,16 +163,16 @@ describe('Constructs', () => {
                     expect(saveSpy).to.have.been.calledWith(customers[4]);
                 });
             });
-            
+
             describe('When customers 2 and 4 are invalid, but the rest are valid', () => {
                 let customers, validateSpy, saveSpy;
                 beforeEach(() => {
                     customers = [
-                        {id: 1},
-                        {id: 2},
-                        {id: 3},
-                        {id: 4},
-                        {id: 5}
+                        { id: 1 },
+                        { id: 2 },
+                        { id: 3 },
+                        { id: 4 },
+                        { id: 5 }
                     ];
                     validateSpy = sinon.spy(function (customer) {
                         // Customers 2 and 4 are invalid, so return false for those.
@@ -122,7 +184,7 @@ describe('Constructs', () => {
                     saveSpy = sinon.spy(function () { });
                     constructs.validateAndCreateCustomers(customers, validateSpy, saveSpy);
                 });
-                
+
                 it('It should validate all of the customers', () => {
                     expect(validateSpy).to.have.been.calledWith(customers[0]);
                     expect(validateSpy).to.have.been.calledWith(customers[1]);
@@ -130,34 +192,34 @@ describe('Constructs', () => {
                     expect(validateSpy).to.have.been.calledWith(customers[3]);
                     expect(validateSpy).to.have.been.calledWith(customers[4]);
                 });
-                
+
                 it('It should save customers 1, 3 and 5', () => {
                     expect(saveSpy).to.have.been.calledWith(customers[0]);
                     expect(saveSpy).to.have.been.calledWith(customers[2]);
                     expect(saveSpy).to.have.been.calledWith(customers[4]);
                 });
-                
+
                 it('It should not save customers 2 and 4', () => {
                     expect(saveSpy).to.not.have.been.calledWith(customers[1]);
                     expect(saveSpy).to.not.have.been.calledWith(customers[3]);
                 });
             });
         });
-            
+
         describe('validateAndCreateCustomers function', () => {
-            
+            let functionBody;
+
             beforeEach(() => {
                 // Execute function for Wallaby to rerun these tests when the body of the function is changed.
                 constructs.validateAndCreateCustomers([]);
+                functionBody = utils.removeInstrumentation(constructs.validateAndCreateCustomers.toString());
             });
-            
+
             it('It should contain the continue keyword', () => {
-                let functionBody = utils.removeInstrumentation(constructs.validateAndCreateCustomers.toString());
                 expect(functionBody).to.contain('continue');
             });
-            
+
             it('The continue keyword should appear before the saveCustomer call', () => {
-                let functionBody = utils.removeInstrumentation(constructs.validateAndCreateCustomers.toString());
                 expect(functionBody.includes('saveCustomer(customer)')).to.be.true;
                 expect(functionBody.indexOf('continue')).to.be.lessThan(functionBody.indexOf('saveCustomer(customer)'));
             });
@@ -206,27 +268,25 @@ describe('Constructs', () => {
         });
 
         describe('getBinaryValuesUpTo function - additional challenges', () => {
-            
+            let functionBody;
+
             beforeEach(() => {
                 // Execute function for Wallaby to rerun these tests when the body of the function is changed.
                 constructs.getBinaryValuesUpTo(null, {});
+                functionBody = utils.removeInstrumentation(constructs.getBinaryValuesUpTo.toString());
             });
 
             it('It should not contain any break statements', () => {
-                expect(constructs.getBinaryValuesUpTo.toString()).to.not.contain('break');
+                expect(functionBody).to.not.contain('break');
             });
 
             it('It should not contain any continue statements', () => {
-                expect(constructs.getBinaryValuesUpTo.toString()).to.not.contain('continue');
+                expect(functionBody).to.not.contain('continue');
             });
 
             it('It should not contain more than 1 return statement that returns a value', () => {
-                var functionBody = utils.removeInstrumentation(constructs.getBinaryValuesUpTo.toString());
-                console.log(functionBody);
-                var numberOfReturnStatements = (functionBody.match(/return.*/g) || []).length;
-                var numberOfReturnStatementsWithoutValue = (functionBody.match(/return\s*;?$/gm) || []).length;
-                console.log(numberOfReturnStatements);
-                console.log(numberOfReturnStatementsWithoutValue);
+                let numberOfReturnStatements = (functionBody.match(/return.*/g) || []).length;
+                let numberOfReturnStatementsWithoutValue = (functionBody.match(/return\s*;?$/gm) || []).length;
                 expect(numberOfReturnStatements - numberOfReturnStatementsWithoutValue).to.equal(1);
             });
         });
