@@ -128,7 +128,23 @@ describe('Functions', function () {
                 arg1 = {};
                 arg2 = 'Hello';
                 arg3 = 123;
-                result = functions.returnArgumentsAsRealArray(arg1, arg2, arg3);
+                result = functions.returnArgumentsAsRealArrayUsingApply(arg1, arg2, arg3);
+            });
+
+            it('It should return the arguments as a real array', () => {
+                expect(result).to.deep.equal([arg1, arg2, arg3]);
+            });
+        });
+    });
+
+    describe('Calling functions', () => {
+        describe('Converting arguments to a real array', () => {
+            let arg1, arg2, arg3, result;
+            beforeEach(() => {
+                arg1 = {};
+                arg2 = 'Hello';
+                arg3 = 123;
+                result = functions.returnArgumentsAsRealArrayUsingCall(arg1, arg2, arg3);
             });
 
             it('It should return the arguments as a real array', () => {
