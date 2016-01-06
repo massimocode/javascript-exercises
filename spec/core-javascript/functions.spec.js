@@ -4,31 +4,31 @@ let expect = require('chai').expect;
 let functions = require('../../lib/core-javascript/functions');
 
 describe('Functions', function () {
-    
+
     describe('Return 123', function () {
         it('Should return 123', function () {
             expect(functions.return123()).to.equal(123);
         });
     });
-    
+
     describe('Return the given value', function () {
         it('Given 123, should return 123', function () {
             var result = functions.returnGivenValue(123);
             expect(result).to.equal(123);
         });
-        
+
         it('Given an object, should return the given object', function () {
             var input = {};
             var result = functions.returnGivenValue(input);
             expect(result).to.equal(input);
         });
-        
+
         it('Given "abc", should return "abc"', function () {
             var result = functions.returnGivenValue("abc");
             expect(result).to.equal("abc");
         });
     });
-    
+
     describe('Get function that returns 123', function () {
         it('Should return a function that returns 123', function () {
             var result = functions.getFunctionThatReturns123();
@@ -117,6 +117,22 @@ describe('Functions', function () {
                 expect(counter()).to.equal(7);
                 expect(counter()).to.equal(8);
                 expect(counter()).to.equal(9);
+            });
+        });
+    });
+
+    describe('Applying functions', () => {
+        describe('Converting arguments to a real array', () => {
+            let arg1, arg2, arg3, result;
+            beforeEach(() => {
+                arg1 = {};
+                arg2 = 'Hello';
+                arg3 = 123;
+                result = functions.returnArgumentsAsRealArray(arg1, arg2, arg3);
+            });
+
+            it('It should return the arguments as a real array', () => {
+                expect(result).to.deep.equal([arg1, arg2, arg3]);
             });
         });
     });
