@@ -257,7 +257,7 @@ describe('Constructs', () => {
                     result = constructs.getBinaryValuesUpTo('011', counters);
                 });
 
-                it('It should report null as 000, 001, 010, 011, 100, 101, 110, 111', () => {
+                it('It should report 000, 001, 010, 011', () => {
                     expect(result).to.equal("000, 001, 010, 011");
                 });
 
