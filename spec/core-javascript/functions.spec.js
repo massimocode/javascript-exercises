@@ -2,6 +2,7 @@
 
 let expect = require('chai').expect;
 let functions = require('../../lib/core-javascript/functions');
+let sinon = require('sinon');
 
 describe('Functions', function () {
 
@@ -149,6 +150,182 @@ describe('Functions', function () {
 
             it('It should return the arguments as a real array', () => {
                 expect(result).to.deep.equal([arg1, arg2, arg3]);
+            });
+        });
+    });
+
+    describe('Invoking a function with context and arguments', () => {
+
+        describe('Given 3 arguments', () => {
+            let spyFunction, context, arg1, arg2, arg3;
+
+            beforeEach(() => {
+                spyFunction = sinon.spy(function () { });
+                context = {};
+                arg1 = { id: 1 };
+                arg2 = { id: 2 };
+                arg3 = { id: 3 };
+                functions.callGivenFunctionWithGivenContextAndArguments(spyFunction, context, arg1, arg2, arg3);
+            });
+
+            it('It should call the supplied function with the given context', () => {
+                expect(spyFunction).to.have.been.calledOn(context);
+            });
+
+            it('It should call the supplied function with the given arguments', () => {
+                expect(spyFunction).to.have.been.calledWithExactly(arg1, arg2, arg3);
+            });
+        });
+
+        describe('Given 5 arguments', () => {
+            let spyFunction, context, arg1, arg2, arg3, arg4, arg5;
+
+            beforeEach(() => {
+                spyFunction = sinon.spy(function () { });
+                context = {};
+                arg1 = { id: 1 };
+                arg2 = { id: 2 };
+                arg3 = { id: 3 };
+                arg4 = { id: 4 };
+                arg5 = { id: 5 };
+                functions.callGivenFunctionWithGivenContextAndArguments(spyFunction, context, arg1, arg2, arg3, arg4, arg5);
+            });
+
+            it('It should call the supplied function with the given context', () => {
+                expect(spyFunction).to.have.been.calledOn(context);
+            });
+
+            it('It should call the supplied function with the given arguments', () => {
+                expect(spyFunction).to.have.been.calledWithExactly(arg1, arg2, arg3, arg4, arg5);
+            });
+        });
+    });
+
+    describe('Returning a function with context and a bound argument and calling it', () => {
+        let spyFunction, context, argument;
+
+        beforeEach(() => {
+            spyFunction = sinon.spy();
+            context = {};
+            argument = { id: 1 };
+            let returnedFunction = functions.returnAFunctionThatIsBoundToTheGivenContextAndArgument(spyFunction, context, argument);
+            returnedFunction();
+        });
+
+        it('It should call the supplied function with the given context', () => {
+            expect(spyFunction).to.have.been.calledOn(context);
+        });
+
+        it('It should call the supplied function with the given arguments', () => {
+            expect(spyFunction).to.have.been.calledWithExactly(argument);
+        });
+    });
+
+    describe('Returning a function with context and several bound arguments and calling it', () => {
+
+        describe('Given 3 arguments', () => {
+            let spyFunction, context, arg1, arg2, arg3;
+
+            beforeEach(() => {
+                spyFunction = sinon.spy(function () { });
+                context = {};
+                arg1 = { id: 1 };
+                arg2 = { id: 2 };
+                arg3 = { id: 3 };
+                let returnedFunction = functions.returnAFunctionThatIsBoundToTheGivenContextAndArguments(spyFunction, context, arg1, arg2, arg3);
+                returnedFunction();
+            });
+
+            it('It should call the supplied function with the given context', () => {
+                expect(spyFunction).to.have.been.calledOn(context);
+            });
+
+            it('It should call the supplied function with the given arguments', () => {
+                expect(spyFunction).to.have.been.calledWithExactly(arg1, arg2, arg3);
+            });
+        });
+
+        describe('Given 5 arguments', () => {
+            let spyFunction, context, arg1, arg2, arg3, arg4, arg5;
+
+            beforeEach(() => {
+                spyFunction = sinon.spy(function () { });
+                context = {};
+                arg1 = { id: 1 };
+                arg2 = { id: 2 };
+                arg3 = { id: 3 };
+                arg4 = { id: 4 };
+                arg5 = { id: 5 };
+                let returnedFunction = functions.returnAFunctionThatIsBoundToTheGivenContextAndArguments(spyFunction, context, arg1, arg2, arg3, arg4, arg5);
+                returnedFunction();
+            });
+
+            it('It should call the supplied function with the given context', () => {
+                expect(spyFunction).to.have.been.calledOn(context);
+            });
+
+            it('It should call the supplied function with the given arguments', () => {
+                expect(spyFunction).to.have.been.calledWithExactly(arg1, arg2, arg3, arg4, arg5);
+            });
+        });
+    });
+
+    describe('Recursion', () => {
+        describe('Recursively counting nodes', () => {
+            describe('Given a node graph containing 5 nodes', () => {
+                let result;
+
+                beforeEach(() => {
+                    let nodeGraph = {
+                        nodes: [
+                            {
+                                nodes: [
+                                    { nodes: [] },
+                                    { nodes: [] },
+                                    { nodes: [] }
+                                ]
+                            }
+                        ]
+                    };
+                    result = functions.countNodes(nodeGraph);
+                });
+
+                it('It should return 5', () => {
+                    expect(result).to.equal(5);
+                });
+            });
+            
+            describe('Given a node graph containing 10 nodes', () => {
+                let result;
+
+                beforeEach(() => {
+                    let nodeGraph = {
+                        nodes: [
+                            {
+                                nodes: [
+                                    { nodes: [] },
+                                    { nodes: [] },
+                                    { nodes: [] }
+                                ]
+                            },
+                            {
+                                nodes: [
+                                    { nodes: [] },
+                                    { nodes: [
+                                        { nodes: [] },
+                                        { nodes: [] }
+                                    ]
+                                    }
+                                ]
+                            }
+                        ]
+                    };
+                    result = functions.countNodes(nodeGraph);
+                });
+
+                it('It should return 10', () => {
+                    expect(result).to.equal(10);
+                });
             });
         });
     });
