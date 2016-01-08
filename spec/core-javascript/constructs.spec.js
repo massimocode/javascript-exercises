@@ -79,13 +79,13 @@ describe('Constructs', () => {
 
         describe('sumOfValuesUsingForLoop function', () => {
             let functionBody;
-            
+
             beforeEach(() => {
                 // Execute function for Wallaby to rerun these tests when the body of the function is changed.
                 constructs.getTypeOfDay('');
                 functionBody = utils.removeInstrumentation(constructs.sumOfValuesUsingForLoop.toString());
             });
-            
+
             it('It should contain a for loop', () => {
                 expect(functionBody).to.contain('for');
             });
@@ -109,13 +109,13 @@ describe('Constructs', () => {
 
         describe('sumOfValuesUsingWhileLoop function', () => {
             let functionBody;
-            
+
             beforeEach(() => {
                 // Execute function for Wallaby to rerun these tests when the body of the function is changed.
                 constructs.getTypeOfDay('');
                 functionBody = utils.removeInstrumentation(constructs.sumOfValuesUsingWhileLoop.toString());
             });
-            
+
             it('It should contain a for loop', () => {
                 expect(functionBody).not.to.contain('for');
             });
@@ -153,6 +153,10 @@ describe('Constructs', () => {
                     expect(validateSpy).to.have.been.calledWith(customers[2]);
                     expect(validateSpy).to.have.been.calledWith(customers[3]);
                     expect(validateSpy).to.have.been.calledWith(customers[4]);
+                });
+
+                it('It should only call validate once per customer', () => {
+                    expect(validateSpy.callCount).to.equal(5);
                 });
 
                 it('It should save all of the customers', () => {
@@ -193,6 +197,10 @@ describe('Constructs', () => {
                     expect(validateSpy).to.have.been.calledWith(customers[4]);
                 });
 
+                it('It should only call validate once per customer', () => {
+                    expect(validateSpy.callCount).to.equal(5);
+                });
+
                 it('It should save customers 1, 3 and 5', () => {
                     expect(saveSpy).to.have.been.calledWith(customers[0]);
                     expect(saveSpy).to.have.been.calledWith(customers[2]);
@@ -227,8 +235,8 @@ describe('Constructs', () => {
     });
 
     describe('Breaking out of nested loops', () => {
-
-        describe('When getting the binary values', () => {
+        
+        describe('When getting the binary values - using break', () => {
 
             describe('When a limit has not been specified (i.e. null)', () => {
                 let counters;
@@ -236,7 +244,7 @@ describe('Constructs', () => {
 
                 beforeEach(() => {
                     counters = { i: 0, j: 0, k: 0 };
-                    result = constructs.getBinaryValuesUpTo(null, counters);
+                    result = constructs.getBinaryValuesUpToTheGivenValueUsingBreak(null, counters);
                 });
 
                 it('It should report null as 000, 001, 010, 011, 100, 101, 110, 111', () => {
@@ -254,7 +262,7 @@ describe('Constructs', () => {
 
                 beforeEach(() => {
                     counters = { i: 0, j: 0, k: 0 };
-                    result = constructs.getBinaryValuesUpTo('011', counters);
+                    result = constructs.getBinaryValuesUpToTheGivenValueUsingBreak('011', counters);
                 });
 
                 it('It should report 000, 001, 010, 011', () => {
@@ -265,29 +273,79 @@ describe('Constructs', () => {
                     expect(counters).to.deep.equal({ i: 0, j: 1, k: 1 });
                 });
             });
+            
+            describe('getBinaryValuesUpToTheGivenValueUsingBreak function - additional challenges', () => {
+                let functionBody;
+
+                beforeEach(() => {
+                    // Execute function for Wallaby to rerun these tests when the body of the function is changed.
+                    constructs.getBinaryValuesUpToTheGivenValueUsingBreak(null, {});
+                    functionBody = utils.removeInstrumentation(constructs.getBinaryValuesUpToTheGivenValueUsingBreak.toString());
+                });
+
+                it('It should only use a single break statement', () => {
+                    let numberOfBreakStatements = (functionBody.match(/break/g) || []).length;
+                    expect(numberOfBreakStatements).to.equal(1);
+                });
+            });
         });
 
-        describe('getBinaryValuesUpTo function - additional challenges', () => {
-            let functionBody;
+        describe('When getting the binary values - using an IIFE', () => {
 
-            beforeEach(() => {
-                // Execute function for Wallaby to rerun these tests when the body of the function is changed.
-                constructs.getBinaryValuesUpTo(null, {});
-                functionBody = utils.removeInstrumentation(constructs.getBinaryValuesUpTo.toString());
+            describe('When a limit has not been specified (i.e. null)', () => {
+                let counters;
+                let result;
+
+                beforeEach(() => {
+                    counters = { i: 0, j: 0, k: 0 };
+                    result = constructs.getBinaryValuesUpToTheGivenValueUsingAnIIFE(null, counters);
+                });
+
+                it('It should report null as 000, 001, 010, 011, 100, 101, 110, 111', () => {
+                    expect(result).to.equal("000, 001, 010, 011, 100, 101, 110, 111");
+                });
+
+                it('It should have iterated over the whole triple nested loop', () => {
+                    expect(counters).to.deep.equal({ i: 2, j: 2, k: 2 });
+                });
             });
 
-            it('It should not contain any break statements', () => {
-                expect(functionBody).to.not.contain('break');
-            });
+            describe('When a limit of 011 has been specified', () => {
+                let counters;
+                let result;
 
-            it('It should not contain any continue statements', () => {
-                expect(functionBody).to.not.contain('continue');
-            });
+                beforeEach(() => {
+                    counters = { i: 0, j: 0, k: 0 };
+                    result = constructs.getBinaryValuesUpToTheGivenValueUsingAnIIFE('011', counters);
+                });
 
-            it('It should not contain more than 1 return statement that returns a value', () => {
-                let numberOfReturnStatements = (functionBody.match(/return.*/g) || []).length;
-                let numberOfReturnStatementsWithoutValue = (functionBody.match(/return\s*;?$/gm) || []).length;
-                expect(numberOfReturnStatements - numberOfReturnStatementsWithoutValue).to.equal(1);
+                it('It should report 000, 001, 010, 011', () => {
+                    expect(result).to.equal("000, 001, 010, 011");
+                });
+
+                it('It should have broken out of the triple nested loop', () => {
+                    expect(counters).to.deep.equal({ i: 0, j: 1, k: 1 });
+                });
+            });
+            
+            describe('getBinaryValuesUpToTheGivenValueUsingAnIIFE function - additional challenges', () => {
+                let functionBody;
+
+                beforeEach(() => {
+                    // Execute function for Wallaby to rerun these tests when the body of the function is changed.
+                    constructs.getBinaryValuesUpToTheGivenValueUsingAnIIFE(null, {});
+                    functionBody = utils.removeInstrumentation(constructs.getBinaryValuesUpToTheGivenValueUsingAnIIFE.toString());
+                });
+
+                it('It should not contain any break statements', () => {
+                    expect(functionBody).to.not.contain('break');
+                });
+
+                it('It should not contain more than 1 return statement that returns a value', () => {
+                    let numberOfReturnStatements = (functionBody.match(/return.*/g) || []).length;
+                    let numberOfReturnStatementsWithoutValue = (functionBody.match(/return\s*;?$/gm) || []).length;
+                    expect(numberOfReturnStatements - numberOfReturnStatementsWithoutValue).to.equal(1);
+                });
             });
         });
     });
