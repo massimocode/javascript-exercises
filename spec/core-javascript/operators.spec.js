@@ -25,4 +25,34 @@ describe('Operators', () => {
         });
     });
 
+    describe('Ternary Operator', () => {
+        describe('Returning the greater value - stage 1', () => {
+            it('Given 1 and 2, it should return 2', () => {
+                expect(operators.returnGreaterUsingTernaryStage1(1, 2)).to.equal(2);
+            });
+
+            it('Given 3 and -4, it should return 3', () => {
+                expect(operators.returnGreaterUsingTernaryStage1(3, -4)).to.equal(3);
+            });
+
+            it('Given 3 and 3, it should return 3', () => {
+                expect(operators.returnGreaterUsingTernaryStage1(3, 3)).to.equal(3);
+            });
+        });
+        
+        describe('Returning the greater value - stage 2', () => {
+            it('Given 1 and 2, it should return 2', () => {
+                expect(operators.returnGreaterUsingTernaryStage2(1, 2)).to.equal(2);
+            });
+
+            it('Given 3 and -4, it should return 3', () => {
+                expect(operators.returnGreaterUsingTernaryStage2(3, -4)).to.equal(3);
+            });
+
+            it('Given 3 and 3, it should return null', () => {
+                expect(operators.returnGreaterUsingTernaryStage2(3, 3)).to.be.null;
+            });
+        });
+    });
+
 });
