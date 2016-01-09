@@ -73,12 +73,12 @@ describe('Context', () => {
                 context.getFunctionsThatReturnNumbers(1);
                 functionBody = utils.removeInstrumentation(context.getFunctionsThatReturnNumbers.toString());
             });
-            
+
             it('It should only contain the function keyword twice', () => {
                 let numberOfFunctionKeywords = functionBody.match(/function/g).length;
                 expect(numberOfFunctionKeywords).to.equal(2);
             });
-            
+
             it('It should contain the let keyword', () => {
                 expect(functionBody).to.contain('let');
             });
@@ -151,9 +151,28 @@ describe('Context', () => {
                 context.getFunctionsThatReturnNumbersOldFashioned(1);
                 functionBody = utils.removeInstrumentation(context.getFunctionsThatReturnNumbersOldFashioned.toString());
             });
-            
+
             it('It should not contain the let keyword', () => {
                 expect(functionBody).to.not.contain('let');
+            });
+        });
+    });
+
+    describe('Context of this', () => {
+        describe('When getting an item\'s current price', () => {
+            it('It should return 12.99 for Heavily Used Vintage Shoes', () => {
+                let getPrice = context.getCurrentPriceFunctionFor('Heavily Used Vintage Shoes');
+                expect(getPrice()).to.equal(12.99);
+            });
+            
+            it('It should return 24.99 for Maxxi Perforated Running Trainers', () => {
+                let getPrice = context.getCurrentPriceFunctionFor('Maxxi Perforated Running Trainers');
+                expect(getPrice()).to.equal(24.99);
+            });
+            
+            it('It should return 12.99 for Some Unknown Product', () => {
+                let getPrice = context.getCurrentPriceFunctionFor('Some Unknown Product');
+                expect(getPrice).to.be.null;
             });
         });
     });
