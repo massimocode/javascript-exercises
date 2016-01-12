@@ -164,15 +164,45 @@ describe('Context', () => {
                 let getPrice = context.getCurrentPriceFunctionFor('Heavily Used Vintage Shoes');
                 expect(getPrice()).to.equal(12.99);
             });
-            
+
             it('It should return 24.99 for Maxxi Perforated Running Trainers', () => {
                 let getPrice = context.getCurrentPriceFunctionFor('Maxxi Perforated Running Trainers');
                 expect(getPrice()).to.equal(24.99);
             });
-            
+
             it('It should return 12.99 for Some Unknown Product', () => {
                 let getPrice = context.getCurrentPriceFunctionFor('Some Unknown Product');
                 expect(getPrice).to.be.null;
+            });
+        });
+    });
+
+    describe('Constructors', () => {
+        describe('When getting a Fire Breathing Dragon', () => {
+            it('It should return a dragon with the correct name', () => {
+                let dragon = context.getDragon('Fire Breathing');
+                expect(dragon.name).to.equal('Fire Breathing Dragon');
+            });
+        });
+        
+        describe('When getting a Smelly Dragon', () => {
+            it('It should return a dragon with the correct name', () => {
+                let dragon = context.getDragon('Smelly');
+                expect(dragon.name).to.equal('Smelly Dragon');
+            });
+        });
+        
+        describe('When getting a Baby Dragon', () => {
+            it('It should return a dragon with the correct name', () => {
+                let dragon = context.getDragon('Baby');
+                expect(dragon.name).to.equal('Baby Dragon');
+            });
+        });
+        
+        describe('When getting a different kind of Dragon', () => {
+            it('It should return a mysterious dragon', () => {
+                let dragon = context.getDragon('Crazy');
+                expect(dragon.name).to.equal('Mysterious Dragon');
             });
         });
     });
