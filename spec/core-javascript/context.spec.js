@@ -170,7 +170,7 @@ describe('Context', () => {
                 expect(getPrice()).to.equal(24.99);
             });
 
-            it('It should return 12.99 for Some Unknown Product', () => {
+            it('It should return null for Some Unknown Product', () => {
                 let getPrice = context.getCurrentPriceFunctionFor('Some Unknown Product');
                 expect(getPrice).to.be.null;
             });
