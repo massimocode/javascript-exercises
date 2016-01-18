@@ -3,6 +3,7 @@
 let expect = require('chai').expect;
 let functions = require('../../lib/core-javascript/functions');
 let sinon = require('sinon');
+let utils = require('../../utils');
 
 describe('Functions', function () {
 
@@ -276,7 +277,7 @@ describe('Functions', function () {
                 let result;
 
                 beforeEach(() => {
-                    let nodeGraph = {
+                    let rootNode = {
                         nodes: [
                             {
                                 nodes: [
@@ -287,7 +288,7 @@ describe('Functions', function () {
                             }
                         ]
                     };
-                    result = functions.countNodes(nodeGraph);
+                    result = functions.countNodes(rootNode);
                 });
 
                 it('It should return 5', () => {
@@ -299,7 +300,7 @@ describe('Functions', function () {
                 let result;
 
                 beforeEach(() => {
-                    let nodeGraph = {
+                    let rootNode = {
                         nodes: [
                             {
                                 nodes: [
@@ -320,11 +321,168 @@ describe('Functions', function () {
                             }
                         ]
                     };
-                    result = functions.countNodes(nodeGraph);
+                    result = functions.countNodes(rootNode);
                 });
 
                 it('It should return 10', () => {
                     expect(result).to.equal(10);
+                });
+            });
+        });
+
+        describe('Counting nodes without recursion', () => {
+            describe('Given a node graph containing 5 nodes', () => {
+                let result;
+
+                beforeEach(() => {
+                    let rootNode = {
+                        nodes: [
+                            {
+                                nodes: [
+                                    { nodes: [] },
+                                    { nodes: [] },
+                                    { nodes: [] }
+                                ]
+                            }
+                        ]
+                    };
+                    result = functions.countNodesWithoutFunctionRecursion(rootNode);
+                });
+
+                it('It should return 5', () => {
+                    expect(result).to.equal(5);
+                });
+            });
+            
+            describe('Given a node graph containing 10 nodes', () => {
+                let result;
+
+                beforeEach(() => {
+                    let rootNode = {
+                        nodes: [
+                            {
+                                nodes: [
+                                    { nodes: [] },
+                                    { nodes: [] },
+                                    { nodes: [] }
+                                ]
+                            },
+                            {
+                                nodes: [
+                                    { nodes: [] },
+                                    { nodes: [
+                                        { nodes: [] },
+                                        { nodes: [] }
+                                    ]
+                                    }
+                                ]
+                            }
+                        ]
+                    };
+                    result = functions.countNodesWithoutFunctionRecursion(rootNode);
+                });
+
+                it('It should return 10', () => {
+                    expect(result).to.equal(10);
+                });
+            });
+            
+            describe('Given a graph that is 1000000 nodes deep', () => {
+                let result;
+
+                beforeEach(() => {
+                    let rootNode = { nodes: [] };
+                    let currentNode = rootNode;
+                    for (let i = 1; i < 1000000; i++) {
+                        let newNode = { nodes: [] };
+                        currentNode.nodes.push(newNode);
+                        currentNode = newNode;
+                    }
+                    result = functions.countNodesWithoutFunctionRecursion(rootNode);
+                });
+
+                it('It should return 1000000', () => {
+                    expect(result).to.equal(1000000);
+                });
+            });
+            
+            describe('The function', () => {
+                let functionBody;
+
+                beforeEach(() => {
+                    // Execute function for Wallaby to rerun these tests when the body of the function is changed.
+                    functions.countNodesWithoutFunctionRecursion({ nodes: [], action: () => { } });
+                    functionBody = utils.removeInstrumentation(functions.countNodesWithoutFunctionRecursion.toString());
+                });
+                
+                it('It should not call itself', () => {
+                    let numberOfTimesFunctionNameUsed = functionBody.match(/countNodesWithoutFunctionRecursion/g);
+                    expect((numberOfTimesFunctionNameUsed || []).length).to.equal(1);
+                });
+            });
+        });
+        
+        describe('Recursively executing a node graph of functions in reverse order', () => {
+            
+            describe('Given a graph of 5 nodes', () => {
+                let function1, function2, function3, function4, function5, rootNode, functionCallOrder;
+
+                beforeEach(() => {
+                    functionCallOrder = [];
+                    function1 = sinon.spy(() => functionCallOrder.push('function1'));
+                    function2 = sinon.spy(() => functionCallOrder.push('function2'));
+                    function3 = sinon.spy(() => functionCallOrder.push('function3'));
+                    function4 = sinon.spy(() => functionCallOrder.push('function4'));
+                    function5 = sinon.spy(() => functionCallOrder.push('function5'));
+                    rootNode = {
+                        action: function1,
+                        nodes: [
+                            { action: function2, nodes: [] },
+                            {
+                                action: function3,
+                                nodes: [
+                                    { action: function4, nodes: [] },
+                                    { action: function5, nodes: [] }
+                                ]
+                            }
+                        ]
+                    };
+                    functions.executeFunctionsInReverseOrderAndReverseDepth(rootNode);
+                });
+
+                it('It should execute the 1st function', () => {
+                    expect(function1).to.have.been.called;
+                });
+
+                it('It should execute the 2nd function', () => {
+                    expect(function2).to.have.been.called;
+                });
+
+                it('It should execute the 3rd function', () => {
+                    expect(function3).to.have.been.called;
+                });
+
+                it('It should execute the 4th function', () => {
+                    expect(function4).to.have.been.called;
+                });
+
+                it('It should execute the 5th function', () => {
+                    expect(function5).to.have.been.called;
+                });
+
+                it('It should not reverse the order of the nodes', () => {
+                    expect(rootNode.nodes[0].action).to.equal(function2);
+                    expect(rootNode.nodes[1].action).to.equal(function3);
+                    expect(rootNode.nodes[1].nodes[0].action).to.equal(function4);
+                    expect(rootNode.nodes[1].nodes[1].action).to.equal(function5);
+                });
+
+                it('It should execute the functions in the given order', () => {
+                    expect(functionCallOrder[0]).to.equal('function5');
+                    expect(functionCallOrder[1]).to.equal('function4');
+                    expect(functionCallOrder[2]).to.equal('function3');
+                    expect(functionCallOrder[3]).to.equal('function2');
+                    expect(functionCallOrder[4]).to.equal('function1');
                 });
             });
         });

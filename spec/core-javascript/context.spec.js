@@ -206,4 +206,13 @@ describe('Context', () => {
             });
         });
     });
+
+    describe('Use strict', () => {
+        describe('When getting an array of numbers', () => {
+            it('It should return the array as expected', () => {
+                let array = context.returnAnArrayOfNumbers(1, 10);
+                expect(array).to.deep.equal([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+            });
+        });
+    });
 });
