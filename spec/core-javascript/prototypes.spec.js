@@ -7,29 +7,29 @@ let utils = require('../../utils');
 
 describe('Prototype', () => {
     let sandbox;
-    
+
     beforeEach(() => {
         sandbox = sinon.sandbox.create();
     });
-    
+
     afterEach(() => {
         sandbox.restore();
     });
-    
+
     describe('Car prototype', () => {
         let carPrototypeBody;
-        
+
         beforeEach(() => {
             // Execute prototype for Wallaby to rerun these tests when the body of the prototype is changed.
             new prototypes.Car();
             carPrototypeBody = utils.removeInstrumentation(prototypes.Car.toString());
         });
-        
+
         it('It should not be an ES6 class', () => {
             expect(carPrototypeBody).to.not.contain('class');
         });
     });
-    
+
     describe('When creating a Car', () => {
         let car;
 
@@ -51,6 +51,18 @@ describe('Prototype', () => {
 
         it('It should have a speed of 100', () => {
             expect(car.getSpeed()).to.equal(100);
+        });
+
+        describe('When getting the type of the car', () => {
+            let type;
+
+            beforeEach(() => {
+                type = prototypes.Car.getTypeOf(car);
+            });
+
+            it('It should return Car', () => {
+                expect(type).to.equal('Car');
+            });
         });
 
         describe('When accelerating', () => {
@@ -75,21 +87,21 @@ describe('Prototype', () => {
             });
         });
     });
-    
+
     describe('SportsCar prototype', () => {
         let sportsCarPrototypeBody;
-        
+
         beforeEach(() => {
             // Execute prototype for Wallaby to rerun these tests when the body of the prototype is changed.
             new prototypes.SportsCar();
             sportsCarPrototypeBody = utils.removeInstrumentation(prototypes.SportsCar.toString());
         });
-        
+
         it('It should not be an ES6 class', () => {
             expect(sportsCarPrototypeBody).to.not.contain('class');
         });
     });
-    
+
     describe('When creating a SportsCar', () => {
         let sportsCar;
 
@@ -115,6 +127,18 @@ describe('Prototype', () => {
 
         it('It should have a speed of 100', () => {
             expect(sportsCar.getSpeed()).to.equal(100);
+        });
+
+        describe('When getting the type of the sports car', () => {
+            let type;
+
+            beforeEach(() => {
+                type = prototypes.Car.getTypeOf(sportsCar);
+            });
+
+            it('It should return SportsCar', () => {
+                expect(type).to.equal('SportsCar');
+            });
         });
 
         describe('When accelerating', () => {

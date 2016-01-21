@@ -53,6 +53,18 @@ describe('ES6 Classes', () => {
             expect(car.getSpeed()).to.equal(100);
         });
 
+        describe('When getting the type of the car', () => {
+            let type;
+
+            beforeEach(() => {
+                type = classes.Car.getTypeOf(car);
+            });
+
+            it('It should return Car', () => {
+                expect(type).to.equal('Car');
+            });
+        });
+
         describe('When accelerating', () => {
             beforeEach(() => {
                 car.accelerate();
@@ -115,6 +127,18 @@ describe('ES6 Classes', () => {
 
         it('It should have a speed of 100', () => {
             expect(sportsCar.getSpeed()).to.equal(100);
+        });
+
+        describe('When getting the type of the sports car', () => {
+            let type;
+
+            beforeEach(() => {
+                type = classes.Car.getTypeOf(sportsCar);
+            });
+
+            it('It should return SportsCar', () => {
+                expect(type).to.equal('SportsCar');
+            });
         });
 
         describe('When accelerating', () => {
