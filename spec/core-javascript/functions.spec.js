@@ -213,6 +213,10 @@ describe('Functions', function () {
             returnedFunction();
         });
 
+        it('It should have only called the function once', () => {
+            expect(spyFunction).to.have.been.calledOnce;
+        });
+
         it('It should call the supplied function with the given context', () => {
             expect(spyFunction).to.have.been.calledOn(context);
         });
@@ -237,6 +241,10 @@ describe('Functions', function () {
                 returnedFunction();
             });
 
+            it('It should have only called the function once', () => {
+                expect(spyFunction).to.have.been.calledOnce;
+            });
+
             it('It should call the supplied function with the given context', () => {
                 expect(spyFunction).to.have.been.calledOn(context);
             });
@@ -259,6 +267,10 @@ describe('Functions', function () {
                 arg5 = { id: 5 };
                 let returnedFunction = functions.returnAFunctionThatIsBoundToTheGivenContextAndArguments(spyFunction, context, arg1, arg2, arg3, arg4, arg5);
                 returnedFunction();
+            });
+
+            it('It should have only called the function once', () => {
+                expect(spyFunction).to.have.been.calledOnce;
             });
 
             it('It should call the supplied function with the given context', () => {
