@@ -15,7 +15,14 @@ function removeInstrumentation(input) {
         .replace(/\$_\$tracer\.log\((.*), \d+, \d+\)/gm, 'console.log($1)');
 }
 
+
+function getStateSync(promise) {
+    let Debug = require('vm').runInDebugContext('Debug');
+    return Debug.MakeMirror(promise, true).status();
+}
+
 module.exports = {
     exampleFunction,
-    removeInstrumentation
+    removeInstrumentation,
+    getStateSync
 }
