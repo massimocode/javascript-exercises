@@ -307,7 +307,7 @@ describe('Functions', function () {
                     expect(result).to.equal(5);
                 });
             });
-            
+
             describe('Given a node graph containing 10 nodes', () => {
                 let result;
 
@@ -365,7 +365,7 @@ describe('Functions', function () {
                     expect(result).to.equal(5);
                 });
             });
-            
+
             describe('Given a node graph containing 10 nodes', () => {
                 let result;
 
@@ -398,14 +398,14 @@ describe('Functions', function () {
                     expect(result).to.equal(10);
                 });
             });
-            
-            describe('Given a graph that is 1000000 nodes deep', () => {
+
+            describe('Given a graph that is 100000 nodes deep', () => {
                 let result;
 
                 beforeEach(() => {
                     let rootNode = { nodes: [] };
                     let currentNode = rootNode;
-                    for (let i = 1; i < 1000000; i++) {
+                    for (let i = 1; i < 100000; i++) {
                         let newNode = { nodes: [] };
                         currentNode.nodes.push(newNode);
                         currentNode = newNode;
@@ -413,11 +413,11 @@ describe('Functions', function () {
                     result = functions.countNodesWithoutFunctionRecursion(rootNode);
                 });
 
-                it('It should return 1000000', () => {
-                    expect(result).to.equal(1000000);
+                it('It should return 100000', () => {
+                    expect(result).to.equal(100000);
                 });
             });
-            
+
             describe('The function', () => {
                 let functionBody;
 
@@ -426,16 +426,16 @@ describe('Functions', function () {
                     functions.countNodesWithoutFunctionRecursion({ nodes: [], action: () => { } });
                     functionBody = utils.removeInstrumentation(functions.countNodesWithoutFunctionRecursion.toString());
                 });
-                
+
                 it('It should not call itself', () => {
                     let numberOfTimesFunctionNameUsed = functionBody.match(/countNodesWithoutFunctionRecursion/g);
                     expect((numberOfTimesFunctionNameUsed || []).length).to.equal(1);
                 });
             });
         });
-        
+
         describe('Recursively executing a node graph of functions in reverse order', () => {
-            
+
             describe('Given a graph of 5 nodes', () => {
                 let function1, function2, function3, function4, function5, rootNode, functionCallOrder;
 
