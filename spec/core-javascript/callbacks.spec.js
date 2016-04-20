@@ -134,4 +134,239 @@ describe('Callbacks', function () {
             });
         });
     });
+
+    describe('Exercise 4 - When the user requests data', function () {
+        let getData, usersCallback;
+
+        describe('And a synchronous error is not thrown', () => {
+
+            beforeEach(() => {
+                getData = sinon.spy((url, callback) => {
+                    usersCallback = callback;
+                });
+                callbacks.exercise4(getData);
+            });
+
+            it('The user should have requested data from "someUrl"', () => {
+                expect(getData).to.have.been.calledWithExactly('someUrl', usersCallback);
+            });
+
+            it('The user should not log anything to the console', () => {
+                expect(console.log).to.not.have.been.called;
+            });
+
+            it('The user should not report any errors to the console', () => {
+                expect(console.error).to.not.have.been.called;
+            });
+
+            describe('When the data has been retrieved successfully', () => {
+                let data;
+
+                beforeEach(() => {
+                    data = { foo: 'bar' };
+                    usersCallback(null, data);
+                });
+
+                it('The user should log the data to the console', () => {
+                    expect(console.log).to.have.been.calledWithExactly(data);
+                });
+
+                it('The user should not report any errors to the console', () => {
+                    expect(console.error).to.not.have.been.called;
+                });
+            });
+
+            describe('When there was an error retrieving the data', () => {
+                let error;
+
+                beforeEach(() => {
+                    error = new Error('Could not retrieve data');
+                    usersCallback(error);
+                });
+
+                it('The user should not log anything to the console', () => {
+                    expect(console.log).to.not.have.been.called;
+                });
+
+                it('The user should report the error to the console', () => {
+                    expect(console.error).to.have.been.calledWithExactly(error);
+                });
+            });
+
+        });
+
+        describe('And a synchronous error is thrown', () => {
+            let error;
+
+            beforeEach(() => {
+                error = new Error('A synchronous error');
+                getData = sinon.spy((url, callback) => {
+                    usersCallback = callback;
+                    throw error;
+                });
+                callbacks.exercise4(getData);
+            });
+
+            it('The user should have requested data from "someUrl"', () => {
+                expect(getData).to.have.been.calledWithExactly('someUrl', usersCallback);
+            });
+
+            it('The user should not log anything to the console', () => {
+                expect(console.log).to.not.have.been.called;
+            });
+
+            it('The user should report the synchronous error to the console', () => {
+                expect(console.error).to.have.been.calledWithExactly(error);
+            });
+        });
+    });
+
+    describe('Exercise 5 - When the user requests data', function () {
+        let getData, usersCallback;
+
+        describe('And a synchronous error is not thrown', () => {
+
+            beforeEach(() => {
+                getData = sinon.spy((url, callback) => {
+                    usersCallback = callback;
+                });
+                callbacks.exercise5(getData);
+            });
+
+            it('The user should have requested data from "someUrl"', () => {
+                expect(getData).to.have.been.calledWithExactly('someUrl', usersCallback);
+            });
+
+            it('The user should not log anything to the console', () => {
+                expect(console.log).to.not.have.been.called;
+            });
+
+            it('The user should not report any errors to the console', () => {
+                expect(console.error).to.not.have.been.called;
+            });
+
+            describe('When the data has been retrieved successfully', () => {
+                let data;
+
+                beforeEach(() => {
+                    data = { foo: 'bar' };
+                    usersCallback(null, data);
+                });
+
+                it('The user should log the data to the console', () => {
+                    expect(console.log).to.have.been.calledWithExactly(data);
+                });
+
+                it('The user should not report any errors to the console', () => {
+                    expect(console.error).to.not.have.been.called;
+                });
+
+                describe('When calling the user\'s callback with an error after it has already been called', () => {
+                    beforeEach(() => {
+                        console.log.reset();
+                        console.error.reset();
+                        usersCallback(new Error());
+                    });
+
+                    it('The user should not log anything to the console', () => {
+                        expect(console.log).to.not.have.been.called;
+                    });
+
+                    it('The user should not report any errors to the console', () => {
+                        expect(console.error).to.not.have.been.called;
+                    });
+                });
+
+                describe('When calling the user\'s callback with data after it has already been called', () => {
+                    beforeEach(() => {
+                        console.log.reset();
+                        console.error.reset();
+                        usersCallback(null, data);
+                    });
+
+                    it('The user should not log anything to the console', () => {
+                        expect(console.log).to.not.have.been.called;
+                    });
+
+                    it('The user should not report any errors to the console', () => {
+                        expect(console.error).to.not.have.been.called;
+                    });
+                });
+            });
+
+            describe('When there was an error retrieving the data', () => {
+                let error;
+
+                beforeEach(() => {
+                    error = new Error('Could not retrieve data');
+                    usersCallback(error);
+                });
+
+                it('The user should not log anything to the console', () => {
+                    expect(console.log).to.not.have.been.called;
+                });
+
+                it('The user should report the error to the console', () => {
+                    expect(console.error).to.have.been.calledWithExactly(error);
+                });
+
+                describe('When calling the user\'s callback with an error after it has already been called', () => {
+                    beforeEach(() => {
+                        console.log.reset();
+                        console.error.reset();
+                        usersCallback(error);
+                    });
+
+                    it('The user should not log anything to the console', () => {
+                        expect(console.log).to.not.have.been.called;
+                    });
+
+                    it('The user should not report any errors to the console', () => {
+                        expect(console.error).to.not.have.been.called;
+                    });
+                });
+
+                describe('When calling the user\'s callback with data after it has already been called', () => {
+                    beforeEach(() => {
+                        console.log.reset();
+                        console.error.reset();
+                        usersCallback(null, {foo: 'bar'});
+                    });
+
+                    it('The user should not log anything to the console', () => {
+                        expect(console.log).to.not.have.been.called;
+                    });
+
+                    it('The user should not report any errors to the console', () => {
+                        expect(console.error).to.not.have.been.called;
+                    });
+                });
+            });
+        });
+
+        describe('And a synchronous error is thrown', () => {
+            let error;
+
+            beforeEach(() => {
+                error = new Error('A synchronous error');
+                getData = sinon.spy((url, callback) => {
+                    usersCallback = callback;
+                    throw error;
+                });
+                callbacks.exercise5(getData);
+            });
+
+            it('The user should have requested data from "someUrl"', () => {
+                expect(getData).to.have.been.calledWithExactly('someUrl', usersCallback);
+            });
+
+            it('The user should not log anything to the console', () => {
+                expect(console.log).to.not.have.been.called;
+            });
+
+            it('The user should report the synchronous error to the console', () => {
+                expect(console.error).to.have.been.calledWithExactly(error);
+            });
+        });
+    });
 });
