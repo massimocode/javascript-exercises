@@ -4,7 +4,7 @@ let expect = require('chai').expect;
 let callbacks = require('../../lib/core-javascript/callbacks');
 let sinon = require('sinon');
 
-describe('Callbacks', function () {
+describe('Callbacks', () => {
     let sandbox;
 
     beforeEach(() => {
@@ -17,7 +17,7 @@ describe('Callbacks', function () {
         sandbox.restore();
     });
 
-    describe('Exercise 1 - When registering a user', function () {
+    describe('Exercise 1 - When registering a user', () => {
         let registerUser, usersCallback;
 
         beforeEach(() => {
@@ -46,7 +46,7 @@ describe('Callbacks', function () {
         });
     });
 
-    describe('Exercise 2 - When placing an order', function () {
+    describe('Exercise 2 - When placing an order', () => {
         let placeOrder, usersCallback;
 
         beforeEach(() => {
@@ -78,7 +78,7 @@ describe('Callbacks', function () {
         });
     });
 
-    describe('Exercise 3 - When requesting data', function () {
+    describe('Exercise 3 - When requesting data', () => {
         let getData, usersCallback;
 
         beforeEach(() => {
@@ -135,7 +135,7 @@ describe('Callbacks', function () {
         });
     });
 
-    describe('Exercise 4 - When requesting data', function () {
+    describe('Exercise 4 - When requesting data', () => {
         let getData, usersCallback;
 
         describe('And a synchronous error is not thrown', () => {
@@ -221,7 +221,7 @@ describe('Callbacks', function () {
         });
     });
 
-    describe('Exercise 5 - When requesting data', function () {
+    describe('Exercise 5 - When requesting data', () => {
         let getData, usersCallback;
 
         describe('And a synchronous error is not thrown', () => {
@@ -370,7 +370,7 @@ describe('Callbacks', function () {
         });
     });
 
-    describe('Exercise 6 - When placing an order and registering a user', function () {
+    describe('Exercise 6 - When placing an order and registering a user', () => {
         let placeOrder, registerUser, placeOrderCallback, registerUserCallback;
 
         beforeEach(() => {
@@ -443,6 +443,139 @@ describe('Callbacks', function () {
 
                 it('It should output the message to the console', () => {
                     expect(console.log).to.have.been.calledWithExactly(`User ${userId} placed order ${orderReferenceNumber}`);
+                });
+            });
+        });
+    });
+
+    describe('Exercise 7 - When inserting data into the database', () => {
+        let connect, connectCallback;
+
+        beforeEach(() => {
+            connect = sinon.spy((serverAddress, callback) => {
+                connectCallback = callback;
+            });
+            callbacks.exercise7(connect);
+        });
+
+        it('It should connect to the database', () => {
+            expect(connect).to.have.been.calledWithExactly('mongodb://mongo-server.foo.com:44017', connectCallback);
+        });
+
+        describe('When there was an error connecting to the database server', () => {
+            let errorConnecting;
+
+            beforeEach(() => {
+                errorConnecting = new Error('Server not found');
+                connectCallback(errorConnecting);
+            });
+
+            it('It should report the error to the console', () => {
+                expect(console.error).to.have.been.calledWithExactly(errorConnecting);
+            });
+
+            it('It should not log anything to the console', () => {
+                expect(console.log).not.to.have.been.called;
+            });
+        });
+
+        describe('When the connection to the database server was established successfully', () => {
+            let connection, openDatabaseCallback;
+
+            beforeEach(() => {
+                connection = {
+                    openDatabase: sinon.spy((databaseName, callback) => {
+                        openDatabaseCallback = callback;
+                    })
+                };
+                connectCallback(null, connection);
+            });
+
+            it('It should not report any errors to the console', () => {
+                expect(console.error).not.to.have.been.called;
+            });
+
+            it('It should not log anything to the console', () => {
+                expect(console.log).not.to.have.been.called;
+            });
+
+            it('It should open the database', () => {
+                expect(connection.openDatabase).to.have.been.calledWithExactly('Master', openDatabaseCallback);
+            });
+
+            describe('When there was an error opening the database', () => {
+                let errorOpeningDatabase;
+
+                beforeEach(() => {
+                    errorOpeningDatabase = new Error('Database does not exist');
+                    openDatabaseCallback(errorOpeningDatabase);
+                });
+
+                it('It should report the error to the console', () => {
+                    expect(console.error).to.have.been.calledWithExactly(errorOpeningDatabase);
+                });
+
+                it('It should not log anything to the console', () => {
+                    expect(console.log).not.to.have.been.called;
+                });
+            });
+
+            describe('When the database was opened successfully', () => {
+                let database, insertRecordCallback;
+
+                beforeEach(() => {
+                    database = {
+                        insertRecord: sinon.spy((collectionName, record, callback) => {
+                            insertRecordCallback = callback;
+                        })
+                    };
+                    openDatabaseCallback(null, database);
+                });
+
+                it('It should not report any errors to the console', () => {
+                    expect(console.error).not.to.have.been.called;
+                });
+
+                it('It should not log anything to the console', () => {
+                    expect(console.log).not.to.have.been.called;
+                });
+
+                it('It should insert the record as expected', () => {
+                    expect(database.insertRecord).to.have.been.calledWithExactly('status', { status: `I'm ready` }, insertRecordCallback);
+                });
+
+                describe('When there was an error inserting the record', () => {
+                    let errorInsertingRecord;
+
+                    beforeEach(() => {
+                        errorInsertingRecord = new Error('Connection timeout');
+                        insertRecordCallback(errorInsertingRecord);
+                    });
+
+                    it('It should report the error to the console', () => {
+                        expect(console.error).to.have.been.calledWithExactly(errorInsertingRecord);
+                    });
+
+                    it('It should not log anything to the console', () => {
+                        expect(console.log).not.to.have.been.called;
+                    });
+                });
+
+                describe('When the record was inserted successfully', () => {
+                    let recordId
+
+                    beforeEach(() => {
+                        recordId = 'some_record_id';
+                        insertRecordCallback(null, recordId);
+                    });
+
+                    it('It should not report any errors to the console', () => {
+                        expect(console.error).not.to.have.been.called;
+                    });
+
+                    it('It should log the record ID to the console', () => {
+                        expect(console.log).to.have.been.calledWithExactly(recordId);
+                    });
                 });
             });
         });
