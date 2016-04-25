@@ -17,7 +17,7 @@ describe('Callbacks', function () {
         sandbox.restore();
     });
 
-    describe('Exercise 1 - When the user registers a user', function () {
+    describe('Exercise 1 - When registering a user', function () {
         let registerUser, usersCallback;
 
         beforeEach(() => {
@@ -27,11 +27,11 @@ describe('Callbacks', function () {
             callbacks.exercise1(registerUser);
         });
 
-        it('The user should have registered a user', () => {
+        it('It should have registered a user', () => {
             expect(registerUser).to.have.been.calledWithExactly(usersCallback);
         });
 
-        it('The user should not log anything to the console', () => {
+        it('It should not log anything to the console', () => {
             expect(console.log).to.not.have.been.called;
         });
 
@@ -40,13 +40,13 @@ describe('Callbacks', function () {
                 usersCallback();
             });
 
-            it('The user should log a notificationa to the console', () => {
+            it('It should log a notification to the console', () => {
                 expect(console.log).to.have.been.calledWithExactly('USER REGISTERED');
             });
         });
     });
 
-    describe('Exercise 2 - When the user places an order', function () {
+    describe('Exercise 2 - When placing an order', function () {
         let placeOrder, usersCallback;
 
         beforeEach(() => {
@@ -56,15 +56,15 @@ describe('Callbacks', function () {
             callbacks.exercise2(placeOrder);
         });
 
-        it('The user should have placed an order', () => {
+        it('It should have placed an order', () => {
             expect(placeOrder).to.have.been.calledWithExactly(usersCallback);
         });
 
-        it('The user should not log anything to the console', () => {
+        it('It should not log anything to the console', () => {
             expect(console.log).to.not.have.been.called;
         });
 
-        describe('When the data has been retrieved successfully', () => {
+        describe('When the order has been placed successfully', () => {
             let orderReferenceNumber;
 
             beforeEach(() => {
@@ -72,13 +72,13 @@ describe('Callbacks', function () {
                 usersCallback(orderReferenceNumber);
             });
 
-            it('The user should log the data to the console', () => {
+            it('It should log the order reference number to the console', () => {
                 expect(console.log).to.have.been.calledWithExactly(orderReferenceNumber);
             });
         });
     });
 
-    describe('Exercise 3 - When the user requests data', function () {
+    describe('Exercise 3 - When requesting data', function () {
         let getData, usersCallback;
 
         beforeEach(() => {
@@ -88,15 +88,15 @@ describe('Callbacks', function () {
             callbacks.exercise3(getData);
         });
 
-        it('The user should have requested data from "someUrl"', () => {
+        it('It should have requested data from "someUrl"', () => {
             expect(getData).to.have.been.calledWithExactly('someUrl', usersCallback);
         });
 
-        it('The user should not log anything to the console', () => {
+        it('It should not log anything to the console', () => {
             expect(console.log).to.not.have.been.called;
         });
 
-        it('The user should not report any errors to the console', () => {
+        it('It should not report any errors to the console', () => {
             expect(console.error).to.not.have.been.called;
         });
 
@@ -108,11 +108,11 @@ describe('Callbacks', function () {
                 usersCallback(null, data);
             });
 
-            it('The user should log the data to the console', () => {
+            it('It should log the data to the console', () => {
                 expect(console.log).to.have.been.calledWithExactly(data);
             });
 
-            it('The user should not report any errors to the console', () => {
+            it('It should not report any errors to the console', () => {
                 expect(console.error).to.not.have.been.called;
             });
         });
@@ -125,17 +125,17 @@ describe('Callbacks', function () {
                 usersCallback(error);
             });
 
-            it('The user should not log anything to the console', () => {
+            it('It should not log anything to the console', () => {
                 expect(console.log).to.not.have.been.called;
             });
 
-            it('The user should report the error to the console', () => {
+            it('It should report the error to the console', () => {
                 expect(console.error).to.have.been.calledWithExactly(error);
             });
         });
     });
 
-    describe('Exercise 4 - When the user requests data', function () {
+    describe('Exercise 4 - When requesting data', function () {
         let getData, usersCallback;
 
         describe('And a synchronous error is not thrown', () => {
@@ -147,15 +147,15 @@ describe('Callbacks', function () {
                 callbacks.exercise4(getData);
             });
 
-            it('The user should have requested data from "someUrl"', () => {
+            it('It should have requested data from "someUrl"', () => {
                 expect(getData).to.have.been.calledWithExactly('someUrl', usersCallback);
             });
 
-            it('The user should not log anything to the console', () => {
+            it('It should not log anything to the console', () => {
                 expect(console.log).to.not.have.been.called;
             });
 
-            it('The user should not report any errors to the console', () => {
+            it('It should not report any errors to the console', () => {
                 expect(console.error).to.not.have.been.called;
             });
 
@@ -167,11 +167,11 @@ describe('Callbacks', function () {
                     usersCallback(null, data);
                 });
 
-                it('The user should log the data to the console', () => {
+                it('It should log the data to the console', () => {
                     expect(console.log).to.have.been.calledWithExactly(data);
                 });
 
-                it('The user should not report any errors to the console', () => {
+                it('It should not report any errors to the console', () => {
                     expect(console.error).to.not.have.been.called;
                 });
             });
@@ -184,11 +184,11 @@ describe('Callbacks', function () {
                     usersCallback(error);
                 });
 
-                it('The user should not log anything to the console', () => {
+                it('It should not log anything to the console', () => {
                     expect(console.log).to.not.have.been.called;
                 });
 
-                it('The user should report the error to the console', () => {
+                it('It should report the error to the console', () => {
                     expect(console.error).to.have.been.calledWithExactly(error);
                 });
             });
@@ -207,21 +207,21 @@ describe('Callbacks', function () {
                 callbacks.exercise4(getData);
             });
 
-            it('The user should have requested data from "someUrl"', () => {
+            it('It should have requested data from "someUrl"', () => {
                 expect(getData).to.have.been.calledWithExactly('someUrl', usersCallback);
             });
 
-            it('The user should not log anything to the console', () => {
+            it('It should not log anything to the console', () => {
                 expect(console.log).to.not.have.been.called;
             });
 
-            it('The user should report the synchronous error to the console', () => {
+            it('It should report the synchronous error to the console', () => {
                 expect(console.error).to.have.been.calledWithExactly(error);
             });
         });
     });
 
-    describe('Exercise 5 - When the user requests data', function () {
+    describe('Exercise 5 - When requesting data', function () {
         let getData, usersCallback;
 
         describe('And a synchronous error is not thrown', () => {
@@ -233,15 +233,15 @@ describe('Callbacks', function () {
                 callbacks.exercise5(getData);
             });
 
-            it('The user should have requested data from "someUrl"', () => {
+            it('It should have requested data from "someUrl"', () => {
                 expect(getData).to.have.been.calledWithExactly('someUrl', usersCallback);
             });
 
-            it('The user should not log anything to the console', () => {
+            it('It should not log anything to the console', () => {
                 expect(console.log).to.not.have.been.called;
             });
 
-            it('The user should not report any errors to the console', () => {
+            it('It should not report any errors to the console', () => {
                 expect(console.error).to.not.have.been.called;
             });
 
@@ -253,42 +253,42 @@ describe('Callbacks', function () {
                     usersCallback(null, data);
                 });
 
-                it('The user should log the data to the console', () => {
+                it('It should log the data to the console', () => {
                     expect(console.log).to.have.been.calledWithExactly(data);
                 });
 
-                it('The user should not report any errors to the console', () => {
+                it('It should not report any errors to the console', () => {
                     expect(console.error).to.not.have.been.called;
                 });
 
-                describe('When calling the user\'s callback with an error after it has already been called', () => {
+                describe('When calling the callback with an error after it has already been called', () => {
                     beforeEach(() => {
                         console.log.reset();
                         console.error.reset();
                         usersCallback(new Error());
                     });
 
-                    it('The user should not log anything to the console', () => {
+                    it('It should not log anything to the console', () => {
                         expect(console.log).to.not.have.been.called;
                     });
 
-                    it('The user should not report any errors to the console', () => {
+                    it('It should not report any errors to the console', () => {
                         expect(console.error).to.not.have.been.called;
                     });
                 });
 
-                describe('When calling the user\'s callback with data after it has already been called', () => {
+                describe('When calling the callback with data after it has already been called', () => {
                     beforeEach(() => {
                         console.log.reset();
                         console.error.reset();
                         usersCallback(null, data);
                     });
 
-                    it('The user should not log anything to the console', () => {
+                    it('It should not log anything to the console', () => {
                         expect(console.log).to.not.have.been.called;
                     });
 
-                    it('The user should not report any errors to the console', () => {
+                    it('It should not report any errors to the console', () => {
                         expect(console.error).to.not.have.been.called;
                     });
                 });
@@ -302,42 +302,42 @@ describe('Callbacks', function () {
                     usersCallback(error);
                 });
 
-                it('The user should not log anything to the console', () => {
+                it('It should not log anything to the console', () => {
                     expect(console.log).to.not.have.been.called;
                 });
 
-                it('The user should report the error to the console', () => {
+                it('It should report the error to the console', () => {
                     expect(console.error).to.have.been.calledWithExactly(error);
                 });
 
-                describe('When calling the user\'s callback with an error after it has already been called', () => {
+                describe('When calling the callback with an error after it has already been called', () => {
                     beforeEach(() => {
                         console.log.reset();
                         console.error.reset();
                         usersCallback(error);
                     });
 
-                    it('The user should not log anything to the console', () => {
+                    it('It should not log anything to the console', () => {
                         expect(console.log).to.not.have.been.called;
                     });
 
-                    it('The user should not report any errors to the console', () => {
+                    it('It should not report any errors to the console', () => {
                         expect(console.error).to.not.have.been.called;
                     });
                 });
 
-                describe('When calling the user\'s callback with data after it has already been called', () => {
+                describe('When calling the callback with data after it has already been called', () => {
                     beforeEach(() => {
                         console.log.reset();
                         console.error.reset();
-                        usersCallback(null, {foo: 'bar'});
+                        usersCallback(null, { foo: 'bar' });
                     });
 
-                    it('The user should not log anything to the console', () => {
+                    it('It should not log anything to the console', () => {
                         expect(console.log).to.not.have.been.called;
                     });
 
-                    it('The user should not report any errors to the console', () => {
+                    it('It should not report any errors to the console', () => {
                         expect(console.error).to.not.have.been.called;
                     });
                 });
@@ -356,16 +356,94 @@ describe('Callbacks', function () {
                 callbacks.exercise5(getData);
             });
 
-            it('The user should have requested data from "someUrl"', () => {
+            it('It should have requested data from "someUrl"', () => {
                 expect(getData).to.have.been.calledWithExactly('someUrl', usersCallback);
             });
 
-            it('The user should not log anything to the console', () => {
+            it('It should not log anything to the console', () => {
                 expect(console.log).to.not.have.been.called;
             });
 
-            it('The user should report the synchronous error to the console', () => {
+            it('It should report the synchronous error to the console', () => {
                 expect(console.error).to.have.been.calledWithExactly(error);
+            });
+        });
+    });
+
+    describe('Exercise 6 - When placing an order and registering a user', function () {
+        let placeOrder, registerUser, placeOrderCallback, registerUserCallback;
+
+        beforeEach(() => {
+            placeOrder = sinon.spy(callback => {
+                placeOrderCallback = callback;
+            });
+            registerUser = sinon.spy(callback => {
+                registerUserCallback = callback;
+            });
+            callbacks.exercise6(placeOrder, registerUser);
+        });
+
+        it('It should have placed an order', () => {
+            expect(placeOrder).to.have.been.calledWithExactly(placeOrderCallback);
+        });
+
+        it('It should have registered a new user', () => {
+            expect(registerUser).to.have.been.calledWithExactly(registerUserCallback);
+        });
+
+        it('It should not log anything to the console', () => {
+            expect(console.log).to.not.have.been.called;
+        });
+
+        describe('When the order has been placed successfully', () => {
+            let orderReferenceNumber;
+
+            beforeEach(() => {
+                orderReferenceNumber = 'Order Reference Number 12345';
+                placeOrderCallback(orderReferenceNumber);
+            });
+
+            it('It should not log anything to the console', () => {
+                expect(console.log).to.not.have.been.called;
+            });
+
+            describe('When the user has been registered successfully', () => {
+                let userId;
+
+                beforeEach(() => {
+                    userId = 'User ID 12231221';
+                    registerUserCallback(userId);
+                });
+
+                it('It should output the message to the console', () => {
+                    expect(console.log).to.have.been.calledWithExactly(`User ${userId} placed order ${orderReferenceNumber}`);
+                });
+            });
+        });
+
+        describe('When the user has been registered successfully', () => {
+            let userId;
+
+            beforeEach(() => {
+                userId = 'User ID 12231221';
+                registerUserCallback(userId);
+            });
+
+            it('It should not log anything to the console', () => {
+                expect(console.log).to.not.have.been.called;
+            });
+
+            describe('When the order has been placed successfully', () => {
+                let orderReferenceNumber;
+
+                beforeEach(() => {
+                    orderReferenceNumber = 'Order Reference Number 12345';
+                    placeOrderCallback(orderReferenceNumber);
+                });
+
+                it('It should output the message to the console', () => {
+                    expect(console.log).to.have.been.calledWithExactly(`User ${userId} placed order ${orderReferenceNumber}`);
+                });
             });
         });
     });
