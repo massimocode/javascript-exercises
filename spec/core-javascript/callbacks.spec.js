@@ -581,7 +581,7 @@ describe('Callbacks', () => {
         });
     });
 
-    describe.only('Exercise 8 - When running the restocking job', () => {
+    describe('Exercise 8 - When running the restocking job', () => {
         let connect, connectCallback;
 
         beforeEach(() => {
