@@ -562,7 +562,7 @@ describe('Callbacks', () => {
                 });
 
                 describe('When the record was inserted successfully', () => {
-                    let recordId
+                    let recordId;
 
                     beforeEach(() => {
                         recordId = 'some_record_id';
@@ -575,6 +575,261 @@ describe('Callbacks', () => {
 
                     it('It should log the record ID to the console', () => {
                         expect(console.log).to.have.been.calledWithExactly(recordId);
+                    });
+                });
+            });
+        });
+    });
+
+    describe.only('Exercise 8 - When running the restocking job', () => {
+        let connect, connectCallback;
+
+        beforeEach(() => {
+            connect = sinon.spy((serverAddress, callback) => {
+                connectCallback = callback;
+            });
+            callbacks.exercise8(connect);
+        });
+
+        it('It should connect to the database', () => {
+            expect(connect).to.have.been.calledWithExactly('mongodb://mongo-server.foo.com:44017', connectCallback);
+        });
+
+        describe('When there was an error connecting to the database server', () => {
+            let errorConnecting;
+
+            beforeEach(() => {
+                errorConnecting = new Error('Server not found');
+                connectCallback(errorConnecting);
+            });
+
+            it('It should report the error to the console', () => {
+                expect(console.error).to.have.been.calledWithExactly(errorConnecting);
+            });
+
+            it('It should not log anything to the console', () => {
+                expect(console.log).not.to.have.been.called;
+            });
+        });
+
+        describe('When the connection to the database server was established successfully', () => {
+            let connection, openDatabaseCallback;
+
+            beforeEach(() => {
+                connection = {
+                    openDatabase: sinon.spy((databaseName, callback) => {
+                        openDatabaseCallback = callback;
+                    })
+                };
+                connectCallback(null, connection);
+            });
+
+            it('It should not report any errors to the console', () => {
+                expect(console.error).not.to.have.been.called;
+            });
+
+            it('It should not log anything to the console', () => {
+                expect(console.log).not.to.have.been.called;
+            });
+
+            it('It should open the Shop database', () => {
+                expect(connection.openDatabase).to.have.been.calledWithExactly('Shop', openDatabaseCallback);
+            });
+
+            describe('When there was an error opening the database', () => {
+                let errorOpeningDatabase;
+
+                beforeEach(() => {
+                    errorOpeningDatabase = new Error('Database does not exist');
+                    openDatabaseCallback(errorOpeningDatabase);
+                });
+
+                it('It should report the error to the console', () => {
+                    expect(console.error).to.have.been.calledWithExactly(errorOpeningDatabase);
+                });
+
+                it('It should not log anything to the console', () => {
+                    expect(console.log).not.to.have.been.called;
+                });
+            });
+
+            describe('When the database was opened successfully', () => {
+                let database, insertRecordCallbacks, queryCallback;
+
+                beforeEach(() => {
+                    insertRecordCallbacks = {};
+                    database = {
+                        insertRecord: sinon.spy((collectionName, record, callback) => {
+                            insertRecordCallbacks[record.productName] = callback;
+                        }),
+                        query: sinon.spy((collectionName, callback) => {
+                            queryCallback = callback;
+                        })
+                    };
+                    openDatabaseCallback(null, database);
+                });
+
+                it('It should not report any errors to the console', () => {
+                    expect(console.error).not.to.have.been.called;
+                });
+
+                it('It should not log anything to the console', () => {
+                    expect(console.log).not.to.have.been.called;
+                });
+
+                it('It should query the products collection as expected', () => {
+                    expect(database.query).to.have.been.calledWithExactly('products', queryCallback);
+                });
+
+                it('It should not insert any records', () => {
+                    expect(database.insertRecord).not.to.have.been.called;
+                });
+
+                describe('When there was an error querying the collection', () => {
+                    let errorQueryingCollection;
+
+                    beforeEach(() => {
+                        errorQueryingCollection = new Error('Collection does not exist');
+                        queryCallback(errorQueryingCollection);
+                    });
+
+                    it('It should report the error to the console', () => {
+                        expect(console.error).to.have.been.calledWithExactly(errorQueryingCollection);
+                    });
+
+                    it('It should not log anything to the console', () => {
+                        expect(console.log).not.to.have.been.called;
+                    });
+
+                    it('It should not insert any records', () => {
+                        expect(database.insertRecord).not.to.have.been.called;
+                    });
+                });
+
+                describe('When the collection was queried successfully', () => {
+                    let records;
+
+                    beforeEach(() => {
+                        records = [
+                            { name: 'Cola', stockLevel: 1 },
+                            { name: 'Fizzy Foo', stockLevel: 0 },
+                            { name: 'Berry Splat', stockLevel: 5 },
+                            { name: 'Sweet Shizzle', stockLevel: 2 },
+                            { name: 'Tropicrazy', stockLevel: 7 }
+                        ];
+                        queryCallback(null, records);
+                    });
+
+                    it('It should not report any errors to the console', () => {
+                        expect(console.error).not.to.have.been.called;
+                    });
+
+                    it('It should not log anything to the console', () => {
+                        expect(console.log).not.to.have.been.called;
+                    });
+
+                    it('It should insert a restocking record for Cola', () => {
+                        expect(database.insertRecord).to.have.been.calledWithExactly('restocking', { productName: 'Cola' }, insertRecordCallbacks['Cola']);
+                    });
+
+                    it('It should insert a restocking record for Fizzy Foo', () => {
+                        expect(database.insertRecord).to.have.been.calledWithExactly('restocking', { productName: 'Fizzy Foo' }, insertRecordCallbacks['Fizzy Foo']);
+                    });
+
+                    it('It should insert a restocking record for Sweet Shizzle', () => {
+                        expect(database.insertRecord).to.have.been.calledWithExactly('restocking', { productName: 'Sweet Shizzle' }, insertRecordCallbacks['Sweet Shizzle']);
+                    });
+
+                    describe('When there was an error inserting the restocking record for Cola, but the restocking record for Fizzy Foo and Sweet Shizzle were successfully inserted', () => {
+                        let errorInsertingRecord;
+
+                        beforeEach(() => {
+                            errorInsertingRecord = new Error('Connection error');
+                            insertRecordCallbacks['Cola'](errorInsertingRecord);
+                            insertRecordCallbacks['Fizzy Foo'](null, 1);
+                            insertRecordCallbacks['Sweet Shizzle'](null, 2);
+                        });
+
+                        it('It should report the error to the console', () => {
+                            expect(console.error).to.have.been.calledWithExactly(errorInsertingRecord);
+                        });
+
+                        it('It should report only 1 error to the console', () => {
+                            expect(console.error).to.have.been.calledOnce;
+                        });
+
+                        it('It should not log anything to the console', () => {
+                            expect(console.log).not.to.have.been.called;
+                        });
+                    });
+
+                    describe('When there was an error inserting the restocking record for Fizzy Foo, but the restocking record for Cola and Sweet Shizzle were successfully inserted', () => {
+                        let errorInsertingRecord;
+
+                        beforeEach(() => {
+                            insertRecordCallbacks['Cola'](null, 1);
+                            errorInsertingRecord = new Error('Connection error');
+                            insertRecordCallbacks['Fizzy Foo'](errorInsertingRecord);
+                            insertRecordCallbacks['Sweet Shizzle'](null, 2);
+                        });
+
+                        it('It should report the error to the console', () => {
+                            expect(console.error).to.have.been.calledWithExactly(errorInsertingRecord);
+                        });
+
+                        it('It should report only 1 error to the console', () => {
+                            expect(console.error).to.have.been.calledOnce;
+                        });
+
+                        it('It should not log anything to the console', () => {
+                            expect(console.log).not.to.have.been.called;
+                        });
+                    });
+
+                    describe('When there were errors inserting the restocking records for Fizzy Foo and Sweet Shizzle, but the restocking record for Cola was successfully inserted', () => {
+                        let errorInsertingFizzyFooRecord, errorInsertingSweetShizzleRecord;
+
+                        beforeEach(() => {
+                            insertRecordCallbacks['Cola'](null, 1);
+
+                            errorInsertingFizzyFooRecord = new Error('Connection error');
+                            insertRecordCallbacks['Fizzy Foo'](errorInsertingFizzyFooRecord);
+
+                            errorInsertingSweetShizzleRecord = new Error('Some other error');
+                            insertRecordCallbacks['Sweet Shizzle'](errorInsertingSweetShizzleRecord);
+                        });
+
+                        it('It should report the Fizzy Foo error to the console', () => {
+                            expect(console.error).to.have.been.calledWithExactly(errorInsertingFizzyFooRecord);
+                        });
+
+                        it('It should report the Sweet Shizzle error to the console', () => {
+                            expect(console.error).to.have.been.calledWithExactly(errorInsertingSweetShizzleRecord);
+                        });
+
+                        it('It should report 2 errors to the console', () => {
+                            expect(console.error).to.have.been.calledTwice;
+                        });
+
+                        it('It should not log anything to the console', () => {
+                            expect(console.log).not.to.have.been.called;
+                        });
+                    });
+
+                    describe('When all restocking records were inserted successfully', () => {
+                        beforeEach(() => {
+                            insertRecordCallbacks['Cola'](null, 1);
+                            insertRecordCallbacks['Fizzy Foo'](null, 2);
+                            insertRecordCallbacks['Sweet Shizzle'](null, 3);
+                        });
+
+                        it('It should not report any errors to the console', () => {
+                            expect(console.error).to.not.have.been.called;
+                        });
+
+                        it('It should log the success message to the console', () => {
+                            expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB SUCCESSFUL');
+                        });
                     });
                 });
             });
