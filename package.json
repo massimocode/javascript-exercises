@@ -4,7 +4,7 @@
   "description": "",
   "main": "",
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha spec --recursive --require mocha-setup.js"
+    "test": "node node_modules/mocha/bin/mocha spec/**/*.spec.js *.spec.js --recursive --require mocha-setup.js"
   },
   "repository": {
     "type": "git",

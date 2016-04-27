@@ -10,8 +10,8 @@ module.exports = function () {
       { pattern: 'utils.js', load: false }
     ],
     tests: [
-      'spec/**/*.js',
-      'utils.spec.js'
+      'spec/**/*.spec.js',
+      '*.spec.js'
     ],
     env: {
       type: 'node'
