@@ -541,7 +541,7 @@ describe('Callbacks', () => {
                 });
 
                 it('It should insert the record as expected', () => {
-                    expect(database.insertRecord).to.have.been.calledWithExactly('status', { status: `I'm ready` }, insertRecordCallback);
+                    expect(database.insertRecord).to.have.been.calledWithExactly('status', { status: `I'm ready!` }, insertRecordCallback);
                 });
 
                 describe('When there was an error inserting the record', () => {
