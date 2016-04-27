@@ -758,8 +758,8 @@ describe('Callbacks', () => {
                             expect(console.error).to.have.been.calledOnce;
                         });
 
-                        it('It should not log anything to the console', () => {
-                            expect(console.log).not.to.have.been.called;
+                        it('It should log the failure message to the console', () => {
+                            expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
                         });
                     });
 
@@ -781,8 +781,8 @@ describe('Callbacks', () => {
                             expect(console.error).to.have.been.calledOnce;
                         });
 
-                        it('It should not log anything to the console', () => {
-                            expect(console.log).not.to.have.been.called;
+                        it('It should log the failure message to the console', () => {
+                            expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
                         });
                     });
 
@@ -811,8 +811,8 @@ describe('Callbacks', () => {
                             expect(console.error).to.have.been.calledTwice;
                         });
 
-                        it('It should not log anything to the console', () => {
-                            expect(console.log).not.to.have.been.called;
+                        it('It should log the failure message to the console', () => {
+                            expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
                         });
                     });
 
