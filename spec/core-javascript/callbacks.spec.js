@@ -706,7 +706,7 @@ describe('Callbacks', () => {
                     });
                 });
 
-                describe('When the collection was queried successfully', () => {
+                describe('When the collection was queried successfully and 3 of 5 products needed restocking', () => {
                     let records;
 
                     beforeEach(() => {
@@ -830,6 +830,77 @@ describe('Callbacks', () => {
                         it('It should log the success message to the console', () => {
                             expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB SUCCESSFUL');
                         });
+                    });
+                });
+
+                describe('When the collection was queried successfully and no products needed restocking', () => {
+                    let records;
+
+                    beforeEach(() => {
+                        records = [
+                            { name: 'Cola', stockLevel: 8 },
+                            { name: 'Fizzy Foo', stockLevel: 4 },
+                            { name: 'Berry Splat', stockLevel: 5 },
+                            { name: 'Sweet Shizzle', stockLevel: 6 },
+                            { name: 'Tropicrazy', stockLevel: 7 }
+                        ];
+                        queryCallback(null, records);
+                    });
+
+                    it('It should not report any errors to the console', () => {
+                        expect(console.error).not.to.have.been.called;
+                    });
+
+                    it('It should not insert any restocking records', () => {
+                        expect(database.insertRecord).to.not.have.been.called;
+                    });
+
+                    it('It should log the success message to the console', () => {
+                        expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB SUCCESSFUL');
+                    });
+                });
+
+                describe('When the collection was queried successfully and 3 of 5 products needed restocking and the inserting of restocking records was synchronous', () => {
+                    let records;
+
+                    beforeEach(() => {
+                        records = [
+                            { name: 'Cola', stockLevel: 1 },
+                            { name: 'Fizzy Foo', stockLevel: 0 },
+                            { name: 'Berry Splat', stockLevel: 5 },
+                            { name: 'Sweet Shizzle', stockLevel: 2 },
+                            { name: 'Tropicrazy', stockLevel: 7 }
+                        ];
+                        let id = 1;
+                        database.insertRecord = sinon.spy((collection, record, callback) => {
+                            insertRecordCallbacks[record.productName] = callback;
+                            callback(null, id++);
+                        });
+                        queryCallback(null, records);
+                    });
+
+                    it('It should not report any errors to the console', () => {
+                        expect(console.error).not.to.have.been.called;
+                    });
+
+                    it('It should insert a restocking record for Cola', () => {
+                        expect(database.insertRecord).to.have.been.calledWithExactly('restocking', { productName: 'Cola' }, insertRecordCallbacks['Cola']);
+                    });
+
+                    it('It should insert a restocking record for Fizzy Foo', () => {
+                        expect(database.insertRecord).to.have.been.calledWithExactly('restocking', { productName: 'Fizzy Foo' }, insertRecordCallbacks['Fizzy Foo']);
+                    });
+
+                    it('It should insert a restocking record for Sweet Shizzle', () => {
+                        expect(database.insertRecord).to.have.been.calledWithExactly('restocking', { productName: 'Sweet Shizzle' }, insertRecordCallbacks['Sweet Shizzle']);
+                    });
+
+                    it('It should log the success message to the console', () => {
+                        expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB SUCCESSFUL');
+                    });
+
+                    it('It should only log the success message to the console once', () => {
+                        expect(console.log).to.have.been.calledOnce;
                     });
                 });
             });
