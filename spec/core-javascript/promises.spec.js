@@ -796,5 +796,332 @@ describe('Promises', function () {
         });
     });
 
+    describe('Exercise 8 - When running the restocking job', () => {
+        let connect, connectDeferred;
 
+        beforeEach(() => {
+            connect = sinon.spy(() => {
+                connectDeferred = Q.defer();
+                return connectDeferred.promise;
+            });
+            promises.exercise8(connect);
+        });
+
+        it('It should connect to the database', () => {
+            expect(connect).to.have.been.calledWithExactly('mongodb://mongo-server.foo.com:44017');
+        });
+
+        describe('When there was an error connecting to the database server', () => {
+            let errorConnecting;
+
+            beforeEach(() => {
+                errorConnecting = new Error('Server not found');
+                connectDeferred.reject(errorConnecting);
+                return zurvan.waitForEmptyQueue();
+            });
+
+            it('It should report the error to the console', () => {
+                expect(console.error).to.have.been.calledWithExactly(errorConnecting);
+            });
+
+            it('It should log the failure message to the console', () => {
+                expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
+            });
+
+            it('It should only log one message to the console', () => {
+                expect(console.log).to.have.been.calledOnce;
+            });
+        });
+
+        describe('When the connection to the database server was established successfully', () => {
+            let connection, openDatabaseDeferred;
+
+            beforeEach(() => {
+                connection = {
+                    openDatabase: sinon.spy(() => {
+                        openDatabaseDeferred = Q.defer();
+                        return openDatabaseDeferred.promise;
+                    })
+                };
+                connectDeferred.resolve(connection);
+                return zurvan.waitForEmptyQueue();
+            });
+
+            it('It should not report any errors to the console', () => {
+                expect(console.error).not.to.have.been.called;
+            });
+
+            it('It should not log anything to the console', () => {
+                expect(console.log).not.to.have.been.called;
+            });
+
+            it('It should open the Shop database', () => {
+                expect(connection.openDatabase).to.have.been.calledWithExactly('Shop');
+            });
+
+            describe('When there was an error opening the database', () => {
+                let errorOpeningDatabase;
+
+                beforeEach(() => {
+                    errorOpeningDatabase = new Error('Database does not exist');
+                    openDatabaseDeferred.reject(errorOpeningDatabase);
+                    return zurvan.waitForEmptyQueue();
+                });
+
+                it('It should report the error to the console', () => {
+                    expect(console.error).to.have.been.calledWithExactly(errorOpeningDatabase);
+                });
+
+                it('It should log the failure message to the console', () => {
+                    expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
+                });
+
+                it('It should only log one message to the console', () => {
+                    expect(console.log).to.have.been.calledOnce;
+                });
+            });
+
+            describe('When the database was opened successfully', () => {
+                let database, insertRecordDeferreds, queryDeferred;
+
+                beforeEach(() => {
+                    insertRecordDeferreds = {};
+                    database = {
+                        insertRecord: sinon.spy((collectionName, record) => {
+                            insertRecordDeferreds[record.productName] = Q.defer();
+                            return insertRecordDeferreds[record.productName].promise;
+                        }),
+                        query: sinon.spy(() => {
+                            queryDeferred = Q.defer();
+                            return queryDeferred.promise;
+                        })
+                    };
+                    openDatabaseDeferred.resolve(database);
+                    return zurvan.waitForEmptyQueue();
+                });
+
+                it('It should not report any errors to the console', () => {
+                    expect(console.error).not.to.have.been.called;
+                });
+
+                it('It should not log anything to the console', () => {
+                    expect(console.log).not.to.have.been.called;
+                });
+
+                it('It should query the products collection as expected', () => {
+                    expect(database.query).to.have.been.calledWithExactly('products');
+                });
+
+                it('It should not insert any records', () => {
+                    expect(database.insertRecord).not.to.have.been.called;
+                });
+
+                describe('When there was an error querying the collection', () => {
+                    let errorQueryingCollection;
+
+                    beforeEach(() => {
+                        errorQueryingCollection = new Error('Collection does not exist');
+                        queryDeferred.reject(errorQueryingCollection);
+                        return zurvan.waitForEmptyQueue();
+                    });
+
+                    it('It should report the error to the console', () => {
+                        expect(console.error).to.have.been.calledWithExactly(errorQueryingCollection);
+                    });
+
+                    it('It should log the failure message to the console', () => {
+                        expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
+                    });
+
+                    it('It should only log one message to the console', () => {
+                        expect(console.log).to.have.been.calledOnce;
+                    });
+
+                    it('It should not insert any records', () => {
+                        expect(database.insertRecord).not.to.have.been.called;
+                    });
+                });
+
+                describe('When the collection was queried successfully and 3 of 5 products needed restocking', () => {
+                    let records;
+
+                    beforeEach(() => {
+                        records = [
+                            { name: 'Cola', stockLevel: 1 },
+                            { name: 'Fizzy Foo', stockLevel: 0 },
+                            { name: 'Berry Splat', stockLevel: 5 },
+                            { name: 'Sweet Shizzle', stockLevel: 2 },
+                            { name: 'Tropicrazy', stockLevel: 7 }
+                        ];
+                        queryDeferred.resolve(records);
+                        return zurvan.waitForEmptyQueue();
+                    });
+
+                    it('It should not report any errors to the console', () => {
+                        expect(console.error).not.to.have.been.called;
+                    });
+
+                    it('It should not log anything to the console', () => {
+                        expect(console.log).not.to.have.been.called;
+                    });
+
+                    it('It should insert a restocking record for Cola', () => {
+                        expect(database.insertRecord).to.have.been.calledWithExactly('restocking', { productName: 'Cola' });
+                    });
+
+                    it('It should insert a restocking record for Fizzy Foo', () => {
+                        expect(database.insertRecord).to.have.been.calledWithExactly('restocking', { productName: 'Fizzy Foo' });
+                    });
+
+                    it('It should insert a restocking record for Sweet Shizzle', () => {
+                        expect(database.insertRecord).to.have.been.calledWithExactly('restocking', { productName: 'Sweet Shizzle' });
+                    });
+
+                    describe('When there was an error inserting the restocking record for Cola, but the restocking record for Fizzy Foo and Sweet Shizzle were successfully inserted', () => {
+                        let errorInsertingRecord;
+
+                        beforeEach(() => {
+                            errorInsertingRecord = new Error('Connection error');
+                            insertRecordDeferreds['Cola'].reject(errorInsertingRecord);
+                            insertRecordDeferreds['Fizzy Foo'].resolve(1);
+                            insertRecordDeferreds['Sweet Shizzle'].resolve(2);
+                            return zurvan.waitForEmptyQueue();
+                        });
+
+                        it('It should report the error to the console', () => {
+                            expect(console.error).to.have.been.calledWithExactly(errorInsertingRecord);
+                        });
+
+                        it('It should report only 1 error to the console', () => {
+                            expect(console.error).to.have.been.calledOnce;
+                        });
+
+                        it('It should log the failure message to the console', () => {
+                            expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
+                        });
+
+                        it('It should only log one message to the console', () => {
+                            expect(console.log).to.have.been.calledOnce;
+                        });
+                    });
+
+                    describe('When there was an error inserting the restocking record for Fizzy Foo, but the restocking record for Cola and Sweet Shizzle were successfully inserted', () => {
+                        let errorInsertingRecord;
+
+                        beforeEach(() => {
+                            insertRecordDeferreds['Cola'].resolve(1);
+                            errorInsertingRecord = new Error('Connection error');
+                            insertRecordDeferreds['Fizzy Foo'].reject(errorInsertingRecord);
+                            insertRecordDeferreds['Sweet Shizzle'].resolve(2);
+                            return zurvan.waitForEmptyQueue();
+                        });
+
+                        it('It should report the error to the console', () => {
+                            expect(console.error).to.have.been.calledWithExactly(errorInsertingRecord);
+                        });
+
+                        it('It should report only 1 error to the console', () => {
+                            expect(console.error).to.have.been.calledOnce;
+                        });
+
+                        it('It should log the failure message to the console', () => {
+                            expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
+                        });
+
+                        it('It should only log one message to the console', () => {
+                            expect(console.log).to.have.been.calledOnce;
+                        });
+                    });
+
+                    describe('When there were errors inserting the restocking records for Fizzy Foo and Sweet Shizzle, but the restocking record for Cola was successfully inserted', () => {
+                        let errorInsertingFizzyFooRecord, errorInsertingSweetShizzleRecord;
+
+                        beforeEach(() => {
+                            insertRecordDeferreds['Cola'].resolve(1);
+
+                            errorInsertingFizzyFooRecord = new Error('Connection error');
+                            insertRecordDeferreds['Fizzy Foo'].reject(errorInsertingFizzyFooRecord);
+
+                            errorInsertingSweetShizzleRecord = new Error('Some other error');
+                            insertRecordDeferreds['Sweet Shizzle'].reject(errorInsertingSweetShizzleRecord);
+                            return zurvan.waitForEmptyQueue();
+                        });
+
+                        it('It should report the Fizzy Foo error to the console', () => {
+                            expect(console.error).to.have.been.calledWithExactly(errorInsertingFizzyFooRecord);
+                        });
+
+                        it('It should report the Sweet Shizzle error to the console', () => {
+                            expect(console.error).to.have.been.calledWithExactly(errorInsertingSweetShizzleRecord);
+                        });
+
+                        it('It should report 2 errors to the console', () => {
+                            expect(console.error).to.have.been.calledTwice;
+                        });
+
+                        it('It should log the failure message to the console', () => {
+                            expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
+                        });
+
+                        it('It should only log one message to the console', () => {
+                            expect(console.log).to.have.been.calledOnce;
+                        });
+                    });
+
+                    describe('When all restocking records were inserted successfully', () => {
+                        beforeEach(() => {
+                            insertRecordDeferreds['Cola'].resolve(1);
+                            insertRecordDeferreds['Fizzy Foo'].resolve(2);
+                            insertRecordDeferreds['Sweet Shizzle'].resolve(3);
+                            return zurvan.waitForEmptyQueue();
+                        });
+
+                        it('It should not report any errors to the console', () => {
+                            expect(console.error).to.not.have.been.called;
+                        });
+
+                        it('It should log the success message to the console', () => {
+                            expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB SUCCESSFUL');
+                        });
+
+                        it('It should only log one message to the console', () => {
+                            expect(console.log).to.have.been.calledOnce;
+                        });
+                    });
+                });
+
+                describe('When the collection was queried successfully and no products needed restocking', () => {
+                    let records;
+
+                    beforeEach(() => {
+                        records = [
+                            { name: 'Cola', stockLevel: 8 },
+                            { name: 'Fizzy Foo', stockLevel: 4 },
+                            { name: 'Berry Splat', stockLevel: 5 },
+                            { name: 'Sweet Shizzle', stockLevel: 6 },
+                            { name: 'Tropicrazy', stockLevel: 7 }
+                        ];
+                        queryDeferred.resolve(records);
+                        return zurvan.waitForEmptyQueue();
+                    });
+
+                    it('It should not report any errors to the console', () => {
+                        expect(console.error).not.to.have.been.called;
+                    });
+
+                    it('It should not insert any restocking records', () => {
+                        expect(database.insertRecord).to.not.have.been.called;
+                    });
+
+                    it('It should log the success message to the console', () => {
+                        expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB SUCCESSFUL');
+                    });
+
+                    it('It should only log one message to the console', () => {
+                        expect(console.log).to.have.been.calledOnce;
+                    });
+                });
+            });
+        });
+    });
 });

@@ -610,6 +610,10 @@ describe('Callbacks', () => {
             it('It should log the failure message to the console', () => {
                 expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
             });
+
+            it('It should only log one message to the console', () => {
+                expect(console.log).to.have.been.calledOnce;
+            });
         });
 
         describe('When the connection to the database server was established successfully', () => {
@@ -650,6 +654,10 @@ describe('Callbacks', () => {
 
                 it('It should log the failure message to the console', () => {
                     expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
+                });
+
+                it('It should only log one message to the console', () => {
+                    expect(console.log).to.have.been.calledOnce;
                 });
             });
 
@@ -699,6 +707,10 @@ describe('Callbacks', () => {
 
                     it('It should log the failure message to the console', () => {
                         expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
+                    });
+
+                    it('It should only log one message to the console', () => {
+                        expect(console.log).to.have.been.calledOnce;
                     });
 
                     it('It should not insert any records', () => {
@@ -761,6 +773,10 @@ describe('Callbacks', () => {
                         it('It should log the failure message to the console', () => {
                             expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
                         });
+
+                        it('It should only log one message to the console', () => {
+                            expect(console.log).to.have.been.calledOnce;
+                        });
                     });
 
                     describe('When there was an error inserting the restocking record for Fizzy Foo, but the restocking record for Cola and Sweet Shizzle were successfully inserted', () => {
@@ -783,6 +799,10 @@ describe('Callbacks', () => {
 
                         it('It should log the failure message to the console', () => {
                             expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
+                        });
+
+                        it('It should only log one message to the console', () => {
+                            expect(console.log).to.have.been.calledOnce;
                         });
                     });
 
@@ -814,6 +834,10 @@ describe('Callbacks', () => {
                         it('It should log the failure message to the console', () => {
                             expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
                         });
+
+                        it('It should only log one message to the console', () => {
+                            expect(console.log).to.have.been.calledOnce;
+                        });
                     });
 
                     describe('When all restocking records were inserted successfully', () => {
@@ -829,6 +853,10 @@ describe('Callbacks', () => {
 
                         it('It should log the success message to the console', () => {
                             expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB SUCCESSFUL');
+                        });
+
+                        it('It should only log one message to the console', () => {
+                            expect(console.log).to.have.been.calledOnce;
                         });
                     });
                 });
@@ -857,6 +885,10 @@ describe('Callbacks', () => {
 
                     it('It should log the success message to the console', () => {
                         expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB SUCCESSFUL');
+                    });
+
+                    it('It should only log one message to the console', () => {
+                        expect(console.log).to.have.been.calledOnce;
                     });
                 });
 
@@ -897,6 +929,10 @@ describe('Callbacks', () => {
 
                     it('It should log the success message to the console', () => {
                         expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB SUCCESSFUL');
+                    });
+
+                    it('It should only log one message to the console', () => {
+                        expect(console.log).to.have.been.calledOnce;
                     });
 
                     it('It should only log the success message to the console once', () => {
