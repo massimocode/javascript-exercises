@@ -607,8 +607,8 @@ describe('Callbacks', () => {
                 expect(console.error).to.have.been.calledWithExactly(errorConnecting);
             });
 
-            it('It should not log anything to the console', () => {
-                expect(console.log).not.to.have.been.called;
+            it('It should log the failure message to the console', () => {
+                expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
             });
         });
 
@@ -648,8 +648,8 @@ describe('Callbacks', () => {
                     expect(console.error).to.have.been.calledWithExactly(errorOpeningDatabase);
                 });
 
-                it('It should not log anything to the console', () => {
-                    expect(console.log).not.to.have.been.called;
+                it('It should log the failure message to the console', () => {
+                    expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
                 });
             });
 
@@ -697,8 +697,8 @@ describe('Callbacks', () => {
                         expect(console.error).to.have.been.calledWithExactly(errorQueryingCollection);
                     });
 
-                    it('It should not log anything to the console', () => {
-                        expect(console.log).not.to.have.been.called;
+                    it('It should log the failure message to the console', () => {
+                        expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB FAILED - SEE ERRORS');
                     });
 
                     it('It should not insert any records', () => {
