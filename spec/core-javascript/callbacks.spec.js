@@ -894,6 +894,28 @@ describe('Callbacks', () => {
                         expect(console.log).to.have.been.calledOnce;
                     });
                 });
+
+                describe('When the collection was queried successfully and there were no products', () => {
+                    beforeEach(() => {
+                        queryCallback(null, []);
+                    });
+
+                    it('It should not report any errors to the console', () => {
+                        expect(console.error).not.to.have.been.called;
+                    });
+
+                    it('It should not insert any restocking records', () => {
+                        expect(database.insertRecord).to.not.have.been.called;
+                    });
+
+                    it('It should log the success message to the console', () => {
+                        expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB SUCCESSFUL');
+                    });
+
+                    it('It should only log one message to the console', () => {
+                        expect(console.log).to.have.been.calledOnce;
+                    });
+                });
             });
         });
     });
@@ -1190,6 +1212,28 @@ describe('Callbacks', () => {
                             { name: 'Tropicrazy', stockLevel: 7 }
                         ];
                         queryCallback(null, records);
+                    });
+
+                    it('It should not report any errors to the console', () => {
+                        expect(console.error).not.to.have.been.called;
+                    });
+
+                    it('It should not insert any restocking records', () => {
+                        expect(database.insertRecord).to.not.have.been.called;
+                    });
+
+                    it('It should log the success message to the console', () => {
+                        expect(console.log).to.have.been.calledWithExactly('RESTOCKING JOB SUCCESSFUL');
+                    });
+
+                    it('It should only log one message to the console', () => {
+                        expect(console.log).to.have.been.calledOnce;
+                    });
+                });
+
+                describe('When the collection was queried successfully and there were no products', () => {
+                    beforeEach(() => {
+                        queryCallback(null, []);
                     });
 
                     it('It should not report any errors to the console', () => {
