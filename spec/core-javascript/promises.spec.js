@@ -77,6 +77,7 @@ describe('Promises', function () {
             resolutionHandler = sinon.stub();
             rejectionHandler = sinon.stub();
             returnValue = promises.forkingPromises(promise, resolutionHandler, rejectionHandler);
+            return zurvan.waitForEmptyQueue();
         });
 
         it('It should not return anything', () => {
@@ -160,6 +161,7 @@ describe('Promises', function () {
             resolutionHandler = sinon.stub();
             rejectionHandler = sinon.stub();
             returnValue = promises.promiseErrorChaining(promise, resolutionHandler, rejectionHandler);
+            return zurvan.waitForEmptyQueue();
         });
 
         it('It should not return anything', () => {
@@ -263,6 +265,7 @@ describe('Promises', function () {
                 return registerUserDeferred.promise;
             });
             promises.exercise1(registerUser);
+            return zurvan.waitForEmptyQueue();
         });
 
         it('It should have registered a user', () => {
@@ -294,6 +297,7 @@ describe('Promises', function () {
                 return placeOrderDeferred.promise;
             });
             promises.exercise2(placeOrder);
+            return zurvan.waitForEmptyQueue();
         });
 
         it('It should have placed an order', () => {
@@ -328,6 +332,7 @@ describe('Promises', function () {
                 return getDataDeferred.promise;
             });
             promises.exercise3(getData);
+            return zurvan.waitForEmptyQueue();
         });
 
         it('It should have requested data from "someUrl"', () => {
@@ -583,6 +588,7 @@ describe('Promises', function () {
                 return registerUserDeferred.promise;
             });
             promises.exercise6(placeOrder, registerUser);
+            return zurvan.waitForEmptyQueue();
         });
 
         it('It should have placed an order', () => {
@@ -663,6 +669,7 @@ describe('Promises', function () {
                 return connectDeferred.promise;
             });
             promises.exercise7(connect);
+            return zurvan.waitForEmptyQueue();
         });
 
         it('It should connect to the database', () => {
@@ -805,6 +812,7 @@ describe('Promises', function () {
                 return connectDeferred.promise;
             });
             promises.exercise8(connect);
+            return zurvan.waitForEmptyQueue();
         });
 
         it('It should connect to the database', () => {
