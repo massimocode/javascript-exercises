@@ -17,6 +17,9 @@ function removeInstrumentation(input) {
 
 
 function getStateSync(promise) {
+    if (!promise || typeof (promise.then) !== 'function') {
+        throw new Error('The provided argument was not a promise');
+    }
     let Debug = require('vm').runInDebugContext('Debug');
     return Debug.MakeMirror(promise, true).status();
 }

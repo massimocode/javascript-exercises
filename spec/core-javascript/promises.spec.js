@@ -5,7 +5,6 @@ let promises = require('../../lib/core-javascript/promises');
 let sinon = require('sinon');
 let zurvan = require('zurvan');
 let utils = require('../../utils');
-let Q = require('q');
 
 describe('Promises', function () {
     let sandbox;
@@ -261,7 +260,7 @@ describe('Promises', function () {
 
         beforeEach(() => {
             registerUser = sinon.spy(() => {
-                registerUserDeferred = Q.defer();
+                registerUserDeferred = Promise.defer();
                 return registerUserDeferred.promise;
             });
             promises.exercise1(registerUser);
@@ -293,7 +292,7 @@ describe('Promises', function () {
 
         beforeEach(() => {
             placeOrder = sinon.spy(() => {
-                placeOrderDeferred = Q.defer();
+                placeOrderDeferred = Promise.defer();
                 return placeOrderDeferred.promise;
             });
             promises.exercise2(placeOrder);
@@ -328,7 +327,7 @@ describe('Promises', function () {
 
         beforeEach(() => {
             getData = sinon.spy(() => {
-                getDataDeferred = Q.defer();
+                getDataDeferred = Promise.defer();
                 return getDataDeferred.promise;
             });
             promises.exercise3(getData);
@@ -391,7 +390,7 @@ describe('Promises', function () {
 
             beforeEach(() => {
                 getData = sinon.spy(() => {
-                    getDataDeferred = Q.defer();
+                    getDataDeferred = Promise.defer();
                     return getDataDeferred.promise;
                 });
                 promises.exercise4(getData);
@@ -492,7 +491,7 @@ describe('Promises', function () {
 
             beforeEach(() => {
                 getData = sinon.spy(() => {
-                    getDataDeferred = Q.defer();
+                    getDataDeferred = Promise.defer();
                     return getDataDeferred.promise;
                 });
                 promises.exercise5(getData);
@@ -580,11 +579,11 @@ describe('Promises', function () {
 
         beforeEach(() => {
             placeOrder = sinon.spy(() => {
-                placeOrderDeferred = Q.defer();
+                placeOrderDeferred = Promise.defer();
                 return placeOrderDeferred.promise;
             });
             registerUser = sinon.spy(() => {
-                registerUserDeferred = Q.defer();
+                registerUserDeferred = Promise.defer();
                 return registerUserDeferred.promise;
             });
             promises.exercise6(placeOrder, registerUser);
@@ -665,7 +664,7 @@ describe('Promises', function () {
 
         beforeEach(() => {
             connect = sinon.spy(() => {
-                connectDeferred = Q.defer();
+                connectDeferred = Promise.defer();
                 return connectDeferred.promise;
             });
             promises.exercise7(connect);
@@ -700,7 +699,7 @@ describe('Promises', function () {
             beforeEach(() => {
                 connection = {
                     openDatabase: sinon.spy(() => {
-                        openDatabaseDeferred = Q.defer();
+                        openDatabaseDeferred = Promise.defer();
                         return openDatabaseDeferred.promise;
                     })
                 };
@@ -744,7 +743,7 @@ describe('Promises', function () {
                 beforeEach(() => {
                     database = {
                         insertRecord: sinon.spy(() => {
-                            insertRecordDeferred = Q.defer();
+                            insertRecordDeferred = Promise.defer();
                             return insertRecordDeferred.promise;
                         })
                     };
@@ -808,7 +807,7 @@ describe('Promises', function () {
 
         beforeEach(() => {
             connect = sinon.spy(() => {
-                connectDeferred = Q.defer();
+                connectDeferred = Promise.defer();
                 return connectDeferred.promise;
             });
             promises.exercise8(connect);
@@ -847,7 +846,7 @@ describe('Promises', function () {
             beforeEach(() => {
                 connection = {
                     openDatabase: sinon.spy(() => {
-                        openDatabaseDeferred = Q.defer();
+                        openDatabaseDeferred = Promise.defer();
                         return openDatabaseDeferred.promise;
                     })
                 };
@@ -896,11 +895,11 @@ describe('Promises', function () {
                     insertRecordDeferreds = {};
                     database = {
                         insertRecord: sinon.spy((collectionName, record) => {
-                            insertRecordDeferreds[record.productName] = Q.defer();
+                            insertRecordDeferreds[record.productName] = Promise.defer();
                             return insertRecordDeferreds[record.productName].promise;
                         }),
                         query: sinon.spy(() => {
-                            queryDeferred = Q.defer();
+                            queryDeferred = Promise.defer();
                             return queryDeferred.promise;
                         })
                     };
@@ -1151,6 +1150,528 @@ describe('Promises', function () {
                     it('It should only log one message to the console', () => {
                         expect(console.log).to.have.been.calledOnce;
                     });
+                });
+            });
+        });
+    });
+
+    describe('Exercise 9 - When running the restocking job', () => {
+        let exercise9Promise, connect, connectDeferred;
+
+        beforeEach(() => {
+            connect = sinon.spy(() => {
+                connectDeferred = Promise.defer();
+                return connectDeferred.promise;
+            });
+            exercise9Promise = promises.exercise9(connect);
+            return zurvan.waitForEmptyQueue();
+        });
+
+        it('It should connect to the database', () => {
+            expect(connect).to.have.been.calledWithExactly('mongodb://mongo-server.foo.com:44017');
+        });
+
+        it('It should not yet resolve/reject the returned promise', () => {
+            expect(utils.getStateSync(exercise9Promise)).to.equal('pending');
+        });
+
+        describe('When there was an error connecting to the database server', () => {
+            let errorConnecting;
+
+            beforeEach(() => {
+                errorConnecting = new Error('Server not found');
+                connectDeferred.reject(errorConnecting);
+                return zurvan.waitForEmptyQueue();
+            });
+
+            it('It should report the error to the console', () => {
+                expect(console.error).to.have.been.calledWithExactly(errorConnecting);
+            });
+
+            it('It should reject the returned promise', () => {
+                expect(utils.getStateSync(exercise9Promise)).to.equal('rejected');
+            });
+
+            it('It should reject the returned promise with the expected message', () => {
+                return exercise9Promise.catch(error => {
+                    expect(error.message).to.equal('RESTOCKING JOB FAILED - SEE ERRORS');
+                });
+            });
+        });
+
+        describe('When the connection to the database server was established successfully', () => {
+            let connection, openDatabaseDeferred;
+
+            beforeEach(() => {
+                connection = {
+                    openDatabase: sinon.spy(() => {
+                        openDatabaseDeferred = Promise.defer();
+                        return openDatabaseDeferred.promise;
+                    })
+                };
+                connectDeferred.resolve(connection);
+                return zurvan.waitForEmptyQueue();
+            });
+
+            it('It should not report any errors to the console', () => {
+                expect(console.error).not.to.have.been.called;
+            });
+
+            it('It should not yet resolve/reject the returned promise', () => {
+                expect(utils.getStateSync(exercise9Promise)).to.equal('pending');
+            });
+
+            it('It should open the Shop database', () => {
+                expect(connection.openDatabase).to.have.been.calledWithExactly('Shop');
+            });
+
+            describe('When there was an error opening the database', () => {
+                let errorOpeningDatabase;
+
+                beforeEach(() => {
+                    errorOpeningDatabase = new Error('Database does not exist');
+                    openDatabaseDeferred.reject(errorOpeningDatabase);
+                    return zurvan.waitForEmptyQueue();
+                });
+
+                it('It should report the error to the console', () => {
+                    expect(console.error).to.have.been.calledWithExactly(errorOpeningDatabase);
+                });
+
+                it('It should reject the returned promise', () => {
+                    expect(utils.getStateSync(exercise9Promise)).to.equal('rejected');
+                });
+
+                it('It should reject the returned promise with the expected message', () => {
+                    return exercise9Promise.catch(error => {
+                        expect(error.message).to.equal('RESTOCKING JOB FAILED - SEE ERRORS');
+                    });
+                });
+            });
+
+            describe('When the database was opened successfully', () => {
+                let database, insertRecordDeferreds, queryDeferred;
+
+                beforeEach(() => {
+                    insertRecordDeferreds = {};
+                    database = {
+                        insertRecord: sinon.spy((collectionName, record) => {
+                            insertRecordDeferreds[record.productName] = Promise.defer();
+                            return insertRecordDeferreds[record.productName].promise;
+                        }),
+                        query: sinon.spy(() => {
+                            queryDeferred = Promise.defer();
+                            return queryDeferred.promise;
+                        })
+                    };
+                    openDatabaseDeferred.resolve(database);
+                    return zurvan.waitForEmptyQueue();
+                });
+
+                it('It should not report any errors to the console', () => {
+                    expect(console.error).not.to.have.been.called;
+                });
+
+                it('It should not yet resolve/reject the returned promise', () => {
+                    expect(utils.getStateSync(exercise9Promise)).to.equal('pending');
+                });
+
+                it('It should query the products collection as expected', () => {
+                    expect(database.query).to.have.been.calledWithExactly('products');
+                });
+
+                it('It should not insert any records', () => {
+                    expect(database.insertRecord).not.to.have.been.called;
+                });
+
+                describe('When there was an error querying the collection', () => {
+                    let errorQueryingCollection;
+
+                    beforeEach(() => {
+                        errorQueryingCollection = new Error('Collection does not exist');
+                        queryDeferred.reject(errorQueryingCollection);
+                        return zurvan.waitForEmptyQueue();
+                    });
+
+                    it('It should report the error to the console', () => {
+                        expect(console.error).to.have.been.calledWithExactly(errorQueryingCollection);
+                    });
+
+                    it('It should reject the returned promise', () => {
+                        expect(utils.getStateSync(exercise9Promise)).to.equal('rejected');
+                    });
+
+                    it('It should reject the returned promise with the expected message', () => {
+                        return exercise9Promise.catch(error => {
+                            expect(error.message).to.equal('RESTOCKING JOB FAILED - SEE ERRORS');
+                        });
+                    });
+
+                    it('It should not insert any records', () => {
+                        expect(database.insertRecord).not.to.have.been.called;
+                    });
+                });
+
+                describe('When the collection was queried successfully and 3 of 5 products needed restocking', () => {
+                    let records;
+
+                    beforeEach(() => {
+                        records = [
+                            { name: 'Cola', stockLevel: 1 },
+                            { name: 'Fizzy Foo', stockLevel: 0 },
+                            { name: 'Berry Splat', stockLevel: 5 },
+                            { name: 'Sweet Shizzle', stockLevel: 2 },
+                            { name: 'Tropicrazy', stockLevel: 7 }
+                        ];
+                        queryDeferred.resolve(records);
+                        return zurvan.waitForEmptyQueue();
+                    });
+
+                    it('It should not report any errors to the console', () => {
+                        expect(console.error).not.to.have.been.called;
+                    });
+
+                    it('It should not yet resolve/reject the returned promise', () => {
+                        expect(utils.getStateSync(exercise9Promise)).to.equal('pending');
+                    });
+
+                    it('It should insert a restocking record for Cola', () => {
+                        expect(database.insertRecord).to.have.been.calledWithExactly('restocking', { productName: 'Cola' });
+                    });
+
+                    it('It should insert a restocking record for Fizzy Foo', () => {
+                        expect(database.insertRecord).to.have.been.calledWithExactly('restocking', { productName: 'Fizzy Foo' });
+                    });
+
+                    it('It should insert a restocking record for Sweet Shizzle', () => {
+                        expect(database.insertRecord).to.have.been.calledWithExactly('restocking', { productName: 'Sweet Shizzle' });
+                    });
+
+                    describe('When there was an error inserting the restocking record for Cola, but the restocking record for Fizzy Foo and Sweet Shizzle were successfully inserted', () => {
+                        let errorInsertingRecord;
+
+                        beforeEach(() => {
+                            errorInsertingRecord = new Error('Connection error');
+                            insertRecordDeferreds['Cola'].reject(errorInsertingRecord);
+                            insertRecordDeferreds['Fizzy Foo'].resolve(1);
+                            insertRecordDeferreds['Sweet Shizzle'].resolve(2);
+                            return zurvan.waitForEmptyQueue();
+                        });
+
+                        it('It should report the error to the console', () => {
+                            expect(console.error).to.have.been.calledWithExactly(errorInsertingRecord);
+                        });
+
+                        it('It should report only 1 error to the console', () => {
+                            expect(console.error).to.have.been.calledOnce;
+                        });
+
+                        it('It should reject the returned promise', () => {
+                            expect(utils.getStateSync(exercise9Promise)).to.equal('rejected');
+                        });
+
+                        it('It should reject the returned promise with the expected message', () => {
+                            return exercise9Promise.catch(error => {
+                                expect(error.message).to.equal('RESTOCKING JOB FAILED - SEE ERRORS');
+                            });
+                        });
+                    });
+
+                    describe('When there was an error inserting the restocking record for Fizzy Foo, but the restocking record for Cola and Sweet Shizzle were successfully inserted', () => {
+                        let errorInsertingRecord;
+
+                        beforeEach(() => {
+                            insertRecordDeferreds['Cola'].resolve(1);
+                            errorInsertingRecord = new Error('Connection error');
+                            insertRecordDeferreds['Fizzy Foo'].reject(errorInsertingRecord);
+                            insertRecordDeferreds['Sweet Shizzle'].resolve(2);
+                            return zurvan.waitForEmptyQueue();
+                        });
+
+                        it('It should report the error to the console', () => {
+                            expect(console.error).to.have.been.calledWithExactly(errorInsertingRecord);
+                        });
+
+                        it('It should report only 1 error to the console', () => {
+                            expect(console.error).to.have.been.calledOnce;
+                        });
+
+                        it('It should reject the returned promise', () => {
+                            expect(utils.getStateSync(exercise9Promise)).to.equal('rejected');
+                        });
+
+                        it('It should reject the returned promise with the expected message', () => {
+                            return exercise9Promise.catch(error => {
+                                expect(error.message).to.equal('RESTOCKING JOB FAILED - SEE ERRORS');
+                            });
+                        });
+                    });
+
+                    describe('When there were errors inserting the restocking records for Fizzy Foo and Sweet Shizzle, but the restocking record for Cola was successfully inserted', () => {
+                        let errorInsertingFizzyFooRecord, errorInsertingSweetShizzleRecord;
+
+                        beforeEach(() => {
+                            insertRecordDeferreds['Cola'].resolve(1);
+
+                            errorInsertingFizzyFooRecord = new Error('Connection error');
+                            insertRecordDeferreds['Fizzy Foo'].reject(errorInsertingFizzyFooRecord);
+
+                            errorInsertingSweetShizzleRecord = new Error('Some other error');
+                            insertRecordDeferreds['Sweet Shizzle'].reject(errorInsertingSweetShizzleRecord);
+                            return zurvan.waitForEmptyQueue();
+                        });
+
+                        it('It should report the Fizzy Foo error to the console', () => {
+                            expect(console.error).to.have.been.calledWithExactly(errorInsertingFizzyFooRecord);
+                        });
+
+                        it('It should report the Sweet Shizzle error to the console', () => {
+                            expect(console.error).to.have.been.calledWithExactly(errorInsertingSweetShizzleRecord);
+                        });
+
+                        it('It should report 2 errors to the console', () => {
+                            expect(console.error).to.have.been.calledTwice;
+                        });
+
+                        it('It should reject the returned promise', () => {
+                            expect(utils.getStateSync(exercise9Promise)).to.equal('rejected');
+                        });
+
+                        it('It should reject the returned promise with the expected message', () => {
+                            return exercise9Promise.catch(error => {
+                                expect(error.message).to.equal('RESTOCKING JOB FAILED - SEE ERRORS');
+                            });
+                        });
+                    });
+
+                    describe('When all restocking records were inserted successfully', () => {
+                        beforeEach(() => {
+                            insertRecordDeferreds['Cola'].resolve(1);
+                            insertRecordDeferreds['Fizzy Foo'].resolve(2);
+                            insertRecordDeferreds['Sweet Shizzle'].resolve(3);
+                            return zurvan.waitForEmptyQueue();
+                        });
+
+                        it('It should not report any errors to the console', () => {
+                            expect(console.error).to.not.have.been.called;
+                        });
+
+                        it('It should resolve the returned promise', () => {
+                            expect(utils.getStateSync(exercise9Promise)).to.equal('resolved');
+                        });
+
+                        it('It should resolve the returned promise with the expected message', () => {
+                            return exercise9Promise.then(result => {
+                                expect(result).to.equal('RESTOCKING JOB SUCCESSFUL');
+                            });
+                        });
+                    });
+                });
+
+                describe('When the collection was queried successfully and no products needed restocking', () => {
+                    let records;
+
+                    beforeEach(() => {
+                        records = [
+                            { name: 'Cola', stockLevel: 8 },
+                            { name: 'Fizzy Foo', stockLevel: 4 },
+                            { name: 'Berry Splat', stockLevel: 5 },
+                            { name: 'Sweet Shizzle', stockLevel: 6 },
+                            { name: 'Tropicrazy', stockLevel: 7 }
+                        ];
+                        queryDeferred.resolve(records);
+                        return zurvan.waitForEmptyQueue();
+                    });
+
+                    it('It should not report any errors to the console', () => {
+                        expect(console.error).not.to.have.been.called;
+                    });
+
+                    it('It should not insert any restocking records', () => {
+                        expect(database.insertRecord).to.not.have.been.called;
+                    });
+
+                    it('It should resolve the returned promise', () => {
+                        expect(utils.getStateSync(exercise9Promise)).to.equal('resolved');
+                    });
+
+                    it('It should resolve the returned promise with the expected message', () => {
+                        return exercise9Promise.then(result => {
+                            expect(result).to.equal('RESTOCKING JOB SUCCESSFUL');
+                        });
+                    });
+                });
+
+                describe('When the collection was queried successfully and there were no products', () => {
+                    beforeEach(() => {
+                        queryDeferred.resolve([]);
+                        return zurvan.waitForEmptyQueue();
+                    });
+
+                    it('It should not report any errors to the console', () => {
+                        expect(console.error).not.to.have.been.called;
+                    });
+
+                    it('It should not insert any restocking records', () => {
+                        expect(database.insertRecord).to.not.have.been.called;
+                    });
+
+                    it('It should resolve the returned promise', () => {
+                        expect(utils.getStateSync(exercise9Promise)).to.equal('resolved');
+                    });
+
+                    it('It should resolve the returned promise with the expected message', () => {
+                        return exercise9Promise.then(result => {
+                            expect(result).to.equal('RESTOCKING JOB SUCCESSFUL');
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+    describe('Exercise 10 - When requesting data', () => {
+        let getData, getDataDeferred;
+
+        beforeEach(() => {
+            getData = sinon.spy(() => {
+                getDataDeferred = Promise.defer();
+                return getDataDeferred.promise;
+            });
+            promises.exercise10(getData);
+            return zurvan.waitForEmptyQueue();
+        });
+
+        it('It should have requested data from "someUrl"', () => {
+            expect(getData).to.have.been.calledWithExactly('someUrl');
+        });
+
+        it('It should not log anything to the console', () => {
+            expect(console.log).to.not.have.been.called;
+        });
+
+        it('It should not report any errors to the console', () => {
+            expect(console.error).to.not.have.been.called;
+        });
+
+        describe('When the data has been retrieved successfully', () => {
+            let data;
+
+            beforeEach(() => {
+                data = { foo: 'bar' };
+                getDataDeferred.resolve(data);
+                return zurvan.waitForEmptyQueue();
+            });
+
+            it('It should log the data to the console', () => {
+                expect(console.log).to.have.been.calledWithExactly(data);
+            });
+
+            it('It should not report any errors to the console', () => {
+                expect(console.error).to.not.have.been.called;
+            });
+
+            describe('When 3 seconds have passed', () => {
+                beforeEach(() => {
+                    console.log.reset();
+                    console.error.reset();
+                    return zurvan.advanceTime(3000);
+                });
+
+                it('It should not log anything to the console', () => {
+                    expect(console.log).to.not.have.been.called;
+                });
+
+                it('It should not report any errors to the console', () => {
+                    expect(console.error).to.not.have.been.called;
+                });
+            });
+        });
+
+        describe('When there was an error retrieving the data', () => {
+            let error;
+
+            beforeEach(() => {
+                error = new Error('Could not retrieve data');
+                getDataDeferred.reject(error);
+                return zurvan.waitForEmptyQueue();
+            });
+
+            it('It should not log anything to the console', () => {
+                expect(console.log).to.not.have.been.called;
+            });
+
+            it('It should report the error to the console', () => {
+                expect(console.error).to.have.been.calledWithExactly(error);
+            });
+
+            describe('When 3 seconds have passed', () => {
+                beforeEach(() => {
+                    console.log.reset();
+                    console.error.reset();
+                    return zurvan.advanceTime(3000);
+                });
+
+                it('It should not log anything to the console', () => {
+                    expect(console.log).to.not.have.been.called;
+                });
+
+                it('It should not report any errors to the console', () => {
+                    expect(console.error).to.not.have.been.called;
+                });
+            });
+        });
+
+        describe('When 3 seconds have passed', () => {
+            beforeEach(() => {
+                return zurvan.advanceTime(3000);
+            });
+
+            it('It should log TIMEOUT to the console', () => {
+                expect(console.log).to.have.been.calledWithExactly('TIMEOUT');
+            });
+
+            it('It should not report any errors to the console', () => {
+                expect(console.error).to.not.have.been.called;
+            });
+
+            describe('When the data has been retrieved successfully', () => {
+                let data;
+
+                beforeEach(() => {
+                    console.log.reset();
+                    console.error.reset();
+                    data = { foo: 'bar' };
+                    getDataDeferred.resolve(data);
+                    return zurvan.waitForEmptyQueue();
+                });
+
+                it('It should not log anything to the console', () => {
+                    expect(console.log).to.not.have.been.called;
+                });
+
+                it('It should not report any errors to the console', () => {
+                    expect(console.error).to.not.have.been.called;
+                });
+            });
+
+            describe('When there was an error retrieving the data', () => {
+                let error;
+
+                beforeEach(() => {
+                    console.log.reset();
+                    console.error.reset();
+                    error = new Error('Could not retrieve data');
+                    getDataDeferred.reject(error);
+                    return zurvan.waitForEmptyQueue();
+                });
+
+                it('It should not log anything to the console', () => {
+                    expect(console.log).to.not.have.been.called;
+                });
+
+                it('It should not report any errors to the console', () => {
+                    expect(console.error).to.not.have.been.called;
                 });
             });
         });
