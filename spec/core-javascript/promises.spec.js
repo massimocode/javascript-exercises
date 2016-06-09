@@ -5,6 +5,7 @@ let promises = require('../../lib/core-javascript/promises');
 let sinon = require('sinon');
 let zurvan = require('zurvan');
 let utils = require('../../utils');
+let inspect = require('es6-promise-inspect');
 
 describe('Promises', function () {
     let sandbox;
@@ -23,7 +24,7 @@ describe('Promises', function () {
 
     describe('Creating promises', function () {
         it('Should be able to return a resolved promise', function () {
-            expect(utils.getStateSync(promises.getResolvedPromise())).to.equal('resolved');
+            expect(inspect.getStatus(promises.getResolvedPromise())).to.equal('resolved');
         });
 
         it('Should be able to return a promise that resolves with the given primitive value', function () {
@@ -40,7 +41,7 @@ describe('Promises', function () {
         });
 
         it('Should be able to return a rejected promise', function () {
-            expect(utils.getStateSync(promises.getRejectedPromise())).to.equal('rejected');
+            expect(inspect.getStatus(promises.getRejectedPromise())).to.equal('rejected');
         });
 
         it('Should be able to return a promise that rejects with the given primitive value', function () {
@@ -61,7 +62,7 @@ describe('Promises', function () {
         });
 
         it('Should be able to return a pending promise', function () {
-            expect(utils.getStateSync(promises.getPendingPromise())).to.equal('pending');
+            expect(inspect.getStatus(promises.getPendingPromise())).to.equal('pending');
         });
     });
 
@@ -1172,7 +1173,7 @@ describe('Promises', function () {
         });
 
         it('It should not yet resolve/reject the returned promise', () => {
-            expect(utils.getStateSync(exercise9Promise)).to.equal('pending');
+            expect(inspect.getStatus(exercise9Promise)).to.equal('pending');
         });
 
         describe('When there was an error connecting to the database server', () => {
@@ -1189,7 +1190,7 @@ describe('Promises', function () {
             });
 
             it('It should reject the returned promise', () => {
-                expect(utils.getStateSync(exercise9Promise)).to.equal('rejected');
+                expect(inspect.getStatus(exercise9Promise)).to.equal('rejected');
             });
 
             it('It should reject the returned promise with the expected message', () => {
@@ -1218,7 +1219,7 @@ describe('Promises', function () {
             });
 
             it('It should not yet resolve/reject the returned promise', () => {
-                expect(utils.getStateSync(exercise9Promise)).to.equal('pending');
+                expect(inspect.getStatus(exercise9Promise)).to.equal('pending');
             });
 
             it('It should open the Shop database', () => {
@@ -1239,7 +1240,7 @@ describe('Promises', function () {
                 });
 
                 it('It should reject the returned promise', () => {
-                    expect(utils.getStateSync(exercise9Promise)).to.equal('rejected');
+                    expect(inspect.getStatus(exercise9Promise)).to.equal('rejected');
                 });
 
                 it('It should reject the returned promise with the expected message', () => {
@@ -1273,7 +1274,7 @@ describe('Promises', function () {
                 });
 
                 it('It should not yet resolve/reject the returned promise', () => {
-                    expect(utils.getStateSync(exercise9Promise)).to.equal('pending');
+                    expect(inspect.getStatus(exercise9Promise)).to.equal('pending');
                 });
 
                 it('It should query the products collection as expected', () => {
@@ -1298,7 +1299,7 @@ describe('Promises', function () {
                     });
 
                     it('It should reject the returned promise', () => {
-                        expect(utils.getStateSync(exercise9Promise)).to.equal('rejected');
+                        expect(inspect.getStatus(exercise9Promise)).to.equal('rejected');
                     });
 
                     it('It should reject the returned promise with the expected message', () => {
@@ -1332,7 +1333,7 @@ describe('Promises', function () {
                     });
 
                     it('It should not yet resolve/reject the returned promise', () => {
-                        expect(utils.getStateSync(exercise9Promise)).to.equal('pending');
+                        expect(inspect.getStatus(exercise9Promise)).to.equal('pending');
                     });
 
                     it('It should insert a restocking record for Cola', () => {
@@ -1367,7 +1368,7 @@ describe('Promises', function () {
                         });
 
                         it('It should reject the returned promise', () => {
-                            expect(utils.getStateSync(exercise9Promise)).to.equal('rejected');
+                            expect(inspect.getStatus(exercise9Promise)).to.equal('rejected');
                         });
 
                         it('It should reject the returned promise with the expected message', () => {
@@ -1397,7 +1398,7 @@ describe('Promises', function () {
                         });
 
                         it('It should reject the returned promise', () => {
-                            expect(utils.getStateSync(exercise9Promise)).to.equal('rejected');
+                            expect(inspect.getStatus(exercise9Promise)).to.equal('rejected');
                         });
 
                         it('It should reject the returned promise with the expected message', () => {
@@ -1434,7 +1435,7 @@ describe('Promises', function () {
                         });
 
                         it('It should reject the returned promise', () => {
-                            expect(utils.getStateSync(exercise9Promise)).to.equal('rejected');
+                            expect(inspect.getStatus(exercise9Promise)).to.equal('rejected');
                         });
 
                         it('It should reject the returned promise with the expected message', () => {
@@ -1457,7 +1458,7 @@ describe('Promises', function () {
                         });
 
                         it('It should resolve the returned promise', () => {
-                            expect(utils.getStateSync(exercise9Promise)).to.equal('resolved');
+                            expect(inspect.getStatus(exercise9Promise)).to.equal('resolved');
                         });
 
                         it('It should resolve the returned promise with the expected message', () => {
@@ -1492,7 +1493,7 @@ describe('Promises', function () {
                     });
 
                     it('It should resolve the returned promise', () => {
-                        expect(utils.getStateSync(exercise9Promise)).to.equal('resolved');
+                        expect(inspect.getStatus(exercise9Promise)).to.equal('resolved');
                     });
 
                     it('It should resolve the returned promise with the expected message', () => {
@@ -1517,7 +1518,7 @@ describe('Promises', function () {
                     });
 
                     it('It should resolve the returned promise', () => {
-                        expect(utils.getStateSync(exercise9Promise)).to.equal('resolved');
+                        expect(inspect.getStatus(exercise9Promise)).to.equal('resolved');
                     });
 
                     it('It should resolve the returned promise with the expected message', () => {
