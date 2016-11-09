@@ -168,13 +168,14 @@ describe('Pizza Delivery Checkout Calculator', function () {
         it('No bottle of drink - Should not apply this discount', () => {
             let results = calculator({
                 items: [
-                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'large', quantity: 2 })
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'large', quantity: 2 }),
+                    drink({ name: 'Dr Spice Cola', price: 0.99, size: 'can', quantity: 1 })
                 ],
                 deliveryMethod: 'delivery',
                 date: testDate
             });
 
-            expect(results.basketTotal).to.equal(37.98);
+            expect(results.basketTotal).to.equal(38.97);
             expect(results.discount && results.discount.name).to.not.equal('Venetian Deal 1');
         });
 
@@ -182,13 +183,14 @@ describe('Pizza Delivery Checkout Calculator', function () {
             let results = calculator({
                 items: [
                     pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'large', quantity: 1 }),
-                    pizza({ name: 'Rustic Rocket And Relish', price: 16.99, size: 'medium', quantity: 1 })
+                    pizza({ name: 'Rustic Rocket And Relish', price: 16.99, size: 'medium', quantity: 1 }),
+                    drink({ name: 'Dr Spice Cola', price: 1.99, size: 'bottle', quantity: 1 })
                 ],
                 deliveryMethod: 'delivery',
                 date: testDate
             });
 
-            expect(results.basketTotal).to.equal(35.98);
+            expect(results.basketTotal).to.equal(37.97);
             expect(results.discount && results.discount.name).to.not.equal('Venetian Deal 1');
         });
 
@@ -196,13 +198,14 @@ describe('Pizza Delivery Checkout Calculator', function () {
             let results = calculator({
                 items: [
                     pizza({ name: 'Pepperoni Pizzazz', price: 15.99, size: 'medium', quantity: 1 }),
-                    pizza({ name: 'Rustic Rocket And Relish', price: 16.99, size: 'medium', quantity: 1 })
+                    pizza({ name: 'Rustic Rocket And Relish', price: 16.99, size: 'medium', quantity: 1 }),
+                    drink({ name: 'Dr Spice Cola', price: 1.99, size: 'bottle', quantity: 1 })
                 ],
                 deliveryMethod: 'delivery',
                 date: testDate
             });
 
-            expect(results.basketTotal).to.equal(32.98);
+            expect(results.basketTotal).to.equal(34.97);
             expect(results.discount && results.discount.name).to.not.equal('Venetian Deal 1');
         });
 
@@ -238,6 +241,266 @@ describe('Pizza Delivery Checkout Calculator', function () {
             expect(results.discount.name).to.equal('Venetian Deal 1');
             expect(results.discount.amount).to.equal(0.98);
             expect(results.totalPayable).to.equal(23.98);
+        });
+    });
+
+    describe('Venetian Deal 2', () => {
+        it('Basic scenario where discount is applied - Same medium pizza', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'medium', quantity: 2 }),
+                    drink({ name: 'Dr Spice Cola', price: 0.99, size: 'can', quantity: 2 })
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(39.96);
+            expect(results.discount.name).to.equal('Venetian Deal 2');
+            expect(results.discount.amount).to.equal(20.97);
+            expect(results.totalPayable).to.equal(18.99);
+        });
+
+        it('Basic scenario where discount is applied - Different medium pizza', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'medium', quantity: 1 }),
+                    pizza({ name: 'Rustic Rocket and Relish', price: 17.99, size: 'medium', quantity: 1 }),
+                    drink({ name: 'Dr Spice Cola', price: 0.99, size: 'can', quantity: 2 })
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(38.96);
+            expect(results.discount.name).to.equal('Venetian Deal 2');
+            expect(results.discount.amount).to.equal(19.97);
+            expect(results.totalPayable).to.equal(18.99);
+        });
+
+        it('Should be applied multiple times to same order', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'medium', quantity: 2 }),
+                    pizza({ name: 'Rustic Rocket and Relish', price: 17.99, size: 'medium', quantity: 2 }),
+                    drink({ name: 'Dr Spice Cola', price: 0.99, size: 'can', quantity: 4 })
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(77.92);
+            expect(results.discount.name).to.equal('Venetian Deal 2');
+            expect(results.discount.amount).to.equal(39.94);
+            expect(results.totalPayable).to.equal(37.98);
+        });
+
+        it('No can of drink - Should not apply this discount', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'medium', quantity: 2 }),
+                    drink({ name: 'Dr Spice Cola', price: 1.99, size: 'bottle', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(39.97);
+            expect(results.discount && results.discount.name).to.not.equal('Venetian Deal 2');
+        });
+
+        it('2 pizzas of different sizes - Should not apply this discount', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'large', quantity: 1 }),
+                    pizza({ name: 'Rustic Rocket And Relish', price: 16.99, size: 'medium', quantity: 1 }),
+                    drink({ name: 'Dr Spice Cola', price: 0.99, size: 'can', quantity: 2 })
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(37.96);
+            expect(results.discount && results.discount.name).to.not.equal('Venetian Deal 2');
+        });
+
+        it('2 pizzas of same size but not medium - Should not apply this discount', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'large', quantity: 1 }),
+                    pizza({ name: 'Rustic Rocket And Relish', price: 17.99, size: 'large', quantity: 1 }),
+                    drink({ name: 'Dr Spice Cola', price: 0.99, size: 'can', quantity: 2 })
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(38.96);
+            expect(results.discount && results.discount.name).to.not.equal('Venetian Deal 2');
+        });
+
+        it('Extra cans of drink should not be discounted and least expensive can should be discounted', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'medium', quantity: 2 }),
+                    drink({ name: 'Dr Spice Cola', price: 1.99, size: 'can', quantity: 2 }),
+                    drink({ name: 'Cheapo Cola', price: 0.99, size: 'can', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(42.95);
+            expect(results.discount.name).to.equal('Venetian Deal 2');
+            expect(results.discount.amount).to.equal(21.97);
+            expect(results.totalPayable).to.equal(20.98);
+        });
+
+        it('Extra pizzas should not be discounted and least expensive pizzas should be discounted', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 2.99, size: 'medium', quantity: 2 }),
+                    pizza({ name: 'Just The Pizza Base Please', price: 0.99, size: 'medium', quantity: 1 }),
+                    drink({ name: 'Dr Spice Cola', price: 7.99, size: 'can', quantity: 2 }),
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(22.95);
+            expect(results.discount.name).to.equal('Venetian Deal 2');
+            expect(results.discount.amount).to.equal(0.97);
+            expect(results.totalPayable).to.equal(21.98);
+        });
+    });
+
+    describe('Venetian Deal 3', () => {
+        it('Basic scenario where discount is applied - Same small pizza', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'small', quantity: 2 }),
+                    drink({ name: 'Dr Spice Cola', price: 0.99, size: 'can', quantity: 2 })
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(39.96);
+            expect(results.discount.name).to.equal('Venetian Deal 3');
+            expect(results.discount.amount).to.equal(22.97);
+            expect(results.totalPayable).to.equal(16.99);
+        });
+
+        it('Basic scenario where discount is applied - Different small pizza', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'small', quantity: 1 }),
+                    pizza({ name: 'Rustic Rocket and Relish', price: 17.99, size: 'small', quantity: 1 }),
+                    drink({ name: 'Dr Spice Cola', price: 0.99, size: 'can', quantity: 2 })
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(38.96);
+            expect(results.discount.name).to.equal('Venetian Deal 3');
+            expect(results.discount.amount).to.equal(21.97);
+            expect(results.totalPayable).to.equal(16.99);
+        });
+
+        it('Should be applied multiple times to same order', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'small', quantity: 2 }),
+                    pizza({ name: 'Rustic Rocket and Relish', price: 17.99, size: 'small', quantity: 2 }),
+                    drink({ name: 'Dr Spice Cola', price: 0.99, size: 'can', quantity: 4 })
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(77.92);
+            expect(results.discount.name).to.equal('Venetian Deal 3');
+            expect(results.discount.amount).to.equal(43.94);
+            expect(results.totalPayable).to.equal(33.98);
+        });
+
+        it('No can of drink - Should not apply this discount', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'small', quantity: 2 }),
+                    drink({ name: 'Dr Spice Cola', price: 1.99, size: 'bottle', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(39.97);
+            expect(results.discount && results.discount.name).to.not.equal('Venetian Deal 3');
+        });
+
+        it('2 pizzas of different sizes - Should not apply this discount', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'large', quantity: 1 }),
+                    pizza({ name: 'Rustic Rocket And Relish', price: 16.99, size: 'small', quantity: 1 }),
+                    drink({ name: 'Dr Spice Cola', price: 0.99, size: 'can', quantity: 2 })
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(37.96);
+            expect(results.discount && results.discount.name).to.not.equal('Venetian Deal 3');
+        });
+
+        it('2 pizzas of same size but not small - Should not apply this discount', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'large', quantity: 1 }),
+                    pizza({ name: 'Rustic Rocket And Relish', price: 17.99, size: 'large', quantity: 1 }),
+                    drink({ name: 'Dr Spice Cola', price: 0.99, size: 'can', quantity: 2 })
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(38.96);
+            expect(results.discount && results.discount.name).to.not.equal('Venetian Deal 3');
+        });
+
+        it('Extra cans of drink should not be discounted and least expensive can should be discounted', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'small', quantity: 2 }),
+                    drink({ name: 'Dr Spice Cola', price: 1.99, size: 'can', quantity: 2 }),
+                    drink({ name: 'Cheapo Cola', price: 0.99, size: 'can', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(42.95);
+            expect(results.discount.name).to.equal('Venetian Deal 3');
+            expect(results.discount.amount).to.equal(23.97);
+            expect(results.totalPayable).to.equal(18.98);
+        });
+
+        it('Extra pizzas should not be discounted and least expensive pizzas should be discounted', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 2.99, size: 'small', quantity: 2 }),
+                    pizza({ name: 'Just The Pizza Base Please', price: 0.99, size: 'small', quantity: 1 }),
+                    drink({ name: 'Dr Spice Cola', price: 7.99, size: 'can', quantity: 2 }),
+                ],
+                deliveryMethod: 'delivery',
+                date: testDate
+            });
+
+            expect(results.basketTotal).to.equal(22.95);
+            expect(results.discount.name).to.equal('Venetian Deal 3');
+            expect(results.discount.amount).to.equal(2.97);
+            expect(results.totalPayable).to.equal(19.98);
         });
     });
 });
