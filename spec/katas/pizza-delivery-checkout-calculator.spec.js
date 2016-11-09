@@ -93,10 +93,8 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(25);
-            expect(results.discount).to.deep.equal({
-                name: '30% Discount',
-                amount: 7.50
-            });
+            expect(results.discount.name).to.equal('30% Discount');
+            expect(results.discount.amount).to.equal(7.50);
             expect(results.totalPayable).to.equal(17.50);
         });
 
@@ -110,10 +108,8 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(27.99);
-            expect(results.discount).to.deep.equal({
-                name: '30% Discount',
-                amount: 8.40
-            });
+            expect(results.discount.name).to.equal('30% Discount');
+            expect(results.discount.amount).to.equal(8.40);
             expect(results.totalPayable).to.equal(19.59);
         });
     });
@@ -130,10 +126,8 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(39.97);
-            expect(results.discount).to.deep.equal({
-                name: 'Venetian Deal 1',
-                amount: 17.98
-            });
+            expect(results.discount.name).to.equal('Venetian Deal 1');
+            expect(results.discount.amount).to.equal(17.98);
             expect(results.totalPayable).to.equal(21.99);
         });
 
@@ -149,10 +143,8 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(38.97);
-            expect(results.discount).to.deep.equal({
-                name: 'Venetian Deal 1',
-                amount: 16.98
-            });
+            expect(results.discount.name).to.equal('Venetian Deal 1');
+            expect(results.discount.amount).to.equal(16.98);
             expect(results.totalPayable).to.equal(21.99);
         });
 
@@ -168,10 +160,8 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(77.94);
-            expect(results.discount).to.deep.equal({
-                name: 'Venetian Deal 1',
-                amount: 33.96
-            });
+            expect(results.discount.name).to.equal('Venetian Deal 1');
+            expect(results.discount.amount).to.equal(33.96);
             expect(results.totalPayable).to.equal(43.98);
         });
 
@@ -228,10 +218,8 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(40.96);
-            expect(results.discount).to.deep.equal({
-                name: 'Venetian Deal 1',
-                amount: 16.98
-            });
+            expect(results.discount.name).to.equal('Venetian Deal 1');
+            expect(results.discount.amount).to.equal(16.98);
             expect(results.totalPayable).to.equal(23.98);
         });
 
@@ -247,10 +235,8 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(24.96);
-            expect(results.discount).to.deep.equal({
-                name: 'Venetian Deal 1',
-                amount: 0.98
-            });
+            expect(results.discount.name).to.equal('Venetian Deal 1');
+            expect(results.discount.amount).to.equal(0.98);
             expect(results.totalPayable).to.equal(23.98);
         });
     });
