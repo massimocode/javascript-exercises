@@ -1199,6 +1199,199 @@ describe('Pizza Delivery Checkout Calculator', function () {
             expect(results.totalPayable).to.equal(34.98);
         });
     });
+
+    describe('Lunchtime Offer 1', () => {
+        it('Basic scenario where discount is applied - Monday - Morning boundary', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 12.99, size: 'small', quantity: 1 }),
+                    side({ name: 'Garlic bread', price: 3.49, quantity: 1 }),
+                    drink({ name: 'Orange Twist', price: 0.99, size: 'can', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: new Date(2016, 10, 7, 11, 30, 0) // Monday 7th November 11:30am
+            });
+
+            expect(results.basketTotal).to.equal(17.47);
+            expect(results.discount.name).to.equal('Lunchtime Offer 1');
+            expect(results.discount.amount).to.equal(5.48);
+            expect(results.totalPayable).to.equal(11.99);
+        });
+        
+        it('Basic scenario where discount is applied - Tuesday - Mid day', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 12.99, size: 'small', quantity: 1 }),
+                    side({ name: 'Garlic bread', price: 3.49, quantity: 1 }),
+                    drink({ name: 'Orange Twist', price: 0.99, size: 'can', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: new Date(2016, 10, 8, 12, 30, 0) // Tuesday 8th November 12:30pm
+            });
+
+            expect(results.basketTotal).to.equal(17.47);
+            expect(results.discount.name).to.equal('Lunchtime Offer 1');
+            expect(results.discount.amount).to.equal(5.48);
+            expect(results.totalPayable).to.equal(11.99);
+        });
+        
+        it('Basic scenario where discount is applied - Wednesday - Mid day', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 12.99, size: 'small', quantity: 1 }),
+                    side({ name: 'Garlic bread', price: 3.49, quantity: 1 }),
+                    drink({ name: 'Orange Twist', price: 0.99, size: 'can', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: new Date(2016, 10, 9, 12, 30, 0) // Wednesday 9th November 1:30pm
+            });
+
+            expect(results.basketTotal).to.equal(17.47);
+            expect(results.discount.name).to.equal('Lunchtime Offer 1');
+            expect(results.discount.amount).to.equal(5.48);
+            expect(results.totalPayable).to.equal(11.99);
+        });
+        
+        it('Basic scenario where discount is applied - Thursday - Afternoon boundary', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 12.99, size: 'small', quantity: 1 }),
+                    side({ name: 'Garlic bread', price: 3.49, quantity: 1 }),
+                    drink({ name: 'Orange Twist', price: 0.99, size: 'can', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: new Date(2016, 10, 3, 16, 30, 59) // Thursday 3rd November 4:30:59pm
+            });
+
+            expect(results.basketTotal).to.equal(17.47);
+            expect(results.discount.name).to.equal('Lunchtime Offer 1');
+            expect(results.discount.amount).to.equal(5.48);
+            expect(results.totalPayable).to.equal(11.99);
+        });
+        
+        it('Basic scenario where discount is not applied - Thursday - Afternoon boundary', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 12.99, size: 'small', quantity: 1 }),
+                    side({ name: 'Garlic bread', price: 3.49, quantity: 1 }),
+                    drink({ name: 'Orange Twist', price: 0.99, size: 'can', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: new Date(2016, 10, 3, 16, 31, 0) // Thursday 3rd November 4:31:00pm
+            });
+
+            expect(results.basketTotal).to.equal(17.47);
+            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+        });
+        
+        it('Basic scenario where discount is not applied - Monday - Morning boundary', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 12.99, size: 'small', quantity: 1 }),
+                    side({ name: 'Garlic bread', price: 3.49, quantity: 1 }),
+                    drink({ name: 'Orange Twist', price: 0.99, size: 'can', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: new Date(2016, 7, 1, 11, 29, 59) // Monday 1st August 11:29:59am
+            });
+
+            expect(results.basketTotal).to.equal(17.47);
+            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+        });
+        
+        it('Basic scenario where discount is not applied - Friday - Lunchtime', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 12.99, size: 'small', quantity: 1 }),
+                    side({ name: 'Garlic bread', price: 3.49, quantity: 1 }),
+                    drink({ name: 'Orange Twist', price: 0.99, size: 'can', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: new Date(2016, 10, 4, 12, 30, 0) // Friday 4th November 12:30pm
+            });
+
+            expect(results.basketTotal).to.equal(17.47);
+            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+        });
+        
+        it('Basic scenario where discount is not applied - Saturday - Lunchtime', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 12.99, size: 'small', quantity: 1 }),
+                    side({ name: 'Garlic bread', price: 3.49, quantity: 1 }),
+                    drink({ name: 'Orange Twist', price: 0.99, size: 'can', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: new Date(2016, 10, 5, 13, 30, 0) // Saturday 5th November 1:30pm
+            });
+
+            expect(results.basketTotal).to.equal(17.47);
+            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+        });
+        
+        it('Basic scenario where discount is not applied - Sunday - Lunchtime', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 12.99, size: 'small', quantity: 1 }),
+                    side({ name: 'Garlic bread', price: 3.49, quantity: 1 }),
+                    drink({ name: 'Orange Twist', price: 0.99, size: 'can', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: new Date(2016, 10, 6, 14, 30, 0) // Sunday 6th November 2:30pm
+            });
+
+            expect(results.basketTotal).to.equal(17.47);
+            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+        });
+
+        it('Basic scenario where discount is not applied - Tuesday - Lunchtime - Medium pizza instead of small', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 12.99, size: 'medium', quantity: 1 }),
+                    side({ name: 'Garlic bread', price: 3.49, quantity: 1 }),
+                    drink({ name: 'Orange Twist', price: 0.99, size: 'can', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: new Date(2016, 10, 8, 12, 30, 0) // Tuesday 8th November 12:30pm
+            });
+
+            expect(results.basketTotal).to.equal(17.47);
+            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+        });
+
+        it('Basic scenario where discount is not applied - Monday - Lunchtime - Cheesy chips instead of Garlic bread', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 12.99, size: 'small', quantity: 1 }),
+                    side({ name: 'Cheesy chips', price: 3.49, quantity: 1 }),
+                    drink({ name: 'Orange Twist', price: 0.99, size: 'can', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: new Date(2016, 10, 7, 13, 0, 0) // Monday 7th November 1:00pm
+            });
+
+            expect(results.basketTotal).to.equal(17.47);
+            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+        });
+
+        it('Basic scenario where discount is not applied - Monday - Lunchtime - Bottle of drink instead of can', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 12.99, size: 'small', quantity: 1 }),
+                    side({ name: 'Garlic bread', price: 3.49, quantity: 1 }),
+                    drink({ name: 'Fuzzy Fizz', price: 1.99, size: 'bottle', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: new Date(2016, 10, 9, 13, 30, 0) // Wednesday 9th November 1:30pm
+            });
+
+            expect(results.basketTotal).to.equal(18.47);
+            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+        });
+
+        // Extra items not counted - cheapest in deal
+        // Multiple applications of discount
+    });
 });
 
 function pizza(params) {
