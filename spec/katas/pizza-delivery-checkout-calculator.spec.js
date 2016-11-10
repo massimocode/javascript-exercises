@@ -1281,7 +1281,7 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(17.47);
-            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+            expect(results.discount && results.discount.name).to.not.equal('Lunchtime Offer 1');
         });
         
         it('Basic scenario where discount is not applied - Monday - Morning boundary', () => {
@@ -1296,7 +1296,7 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(17.47);
-            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+            expect(results.discount && results.discount.name).to.not.equal('Lunchtime Offer 1');
         });
         
         it('Basic scenario where discount is not applied - Friday - Lunchtime', () => {
@@ -1311,7 +1311,7 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(17.47);
-            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+            expect(results.discount && results.discount.name).to.not.equal('Lunchtime Offer 1');
         });
         
         it('Basic scenario where discount is not applied - Saturday - Lunchtime', () => {
@@ -1326,7 +1326,7 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(17.47);
-            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+            expect(results.discount && results.discount.name).to.not.equal('Lunchtime Offer 1');
         });
         
         it('Basic scenario where discount is not applied - Sunday - Lunchtime', () => {
@@ -1341,7 +1341,7 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(17.47);
-            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+            expect(results.discount && results.discount.name).to.not.equal('Lunchtime Offer 1');
         });
 
         it('Basic scenario where discount is not applied - Tuesday - Lunchtime - Medium pizza instead of small', () => {
@@ -1356,7 +1356,7 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(17.47);
-            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+            expect(results.discount && results.discount.name).to.not.equal('Lunchtime Offer 1');
         });
 
         it('Basic scenario where discount is not applied - Monday - Lunchtime - Cheesy chips instead of Garlic bread', () => {
@@ -1371,7 +1371,7 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(17.47);
-            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+            expect(results.discount && results.discount.name).to.not.equal('Lunchtime Offer 1');
         });
 
         it('Basic scenario where discount is not applied - Monday - Lunchtime - Bottle of drink instead of can', () => {
@@ -1386,7 +1386,25 @@ describe('Pizza Delivery Checkout Calculator', function () {
             });
 
             expect(results.basketTotal).to.equal(18.47);
-            expect(results.discount.name).to.not.equal('Lunchtime Offer 1');
+            expect(results.discount && results.discount.name).to.not.equal('Lunchtime Offer 1');
+        });
+
+        it('Extra items should not be discounted and cheapest item should be included in the offer', () => {
+            let results = calculator({
+                items: [
+                    pizza({ name: 'Pepperoni Pizzazz', price: 10.99, size: 'small', quantity: 1 }),
+                    pizza({ name: 'Gastronomic Garlic', price: 8.99, size: 'small', quantity: 1 }),
+                    side({ name: 'Garlic bread', price: 3.49, quantity: 1 }),
+                    drink({ name: 'Orange Twist', price: 0.99, size: 'can', quantity: 1 })
+                ],
+                deliveryMethod: 'delivery',
+                date: new Date(2016, 10, 7, 13, 0, 0) // Monday 7th November 1pm
+            });
+
+            expect(results.basketTotal).to.equal(24.46);
+            expect(results.discount.name).to.equal('Lunchtime Offer 1');
+            expect(results.discount.amount).to.equal(1.48);
+            expect(results.totalPayable).to.equal(22.98);
         });
 
         // Extra items not counted - cheapest in deal
