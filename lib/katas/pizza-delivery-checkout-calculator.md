@@ -11,9 +11,9 @@ and let the customer how much discount was applied and which discount it was.
 - The calculator should choose the overall best discount.
 - The calculator should choose the most profitable way of calculating each discount.
 - The calculator should return a CheckoutTotals object detailing the order total and which discount was applied. See the Data section for the specification how that should look.
-- It should be easy to add/remove discounts without changing the core logic of the checkout or affecting other existing discounts.
-This requirement is not enforced using tests and you will likely meet this requirement naturally as part of writing the calculator,
-but it's definitely a point you should think about once you have completed your solution.
+- It should be easy to add/remove discounts, change product prices and add/remove products without changing the core logic of the checkout
+or affecting other existing discounts. This requirement is not specifically enforced using tests and you might meet this requirement
+naturally as part of writing the calculator, but it's definitely a point you should think about once you have completed your solution.
 
 ## Data
 ### Basket
