@@ -123,15 +123,15 @@ describe('Pizza Delivery Checkout Calculator', function () {
             let results = calculator({
                 items: [
                     pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'large', quantity: 2 }),
-                    drink({ name: 'Dr Spice Cola', price: 1.99, size: 'bottle', quantity: 1 })
+                    drink({ name: 'Dr Spice Cola', price: 10.99, size: 'bottle', quantity: 1 })
                 ],
                 deliveryMethod: testDeliveryMethod,
                 date: testDate
             });
 
-            expect(results.basketTotal).to.equal(39.97);
+            expect(results.basketTotal).to.equal(48.97);
             expect(results.discount.name).to.equal('Venetian Deal 1');
-            expect(results.discount.amount).to.equal(17.98);
+            expect(results.discount.amount).to.equal(26.98);
             expect(results.totalPayable).to.equal(21.99);
         });
 
@@ -157,15 +157,15 @@ describe('Pizza Delivery Checkout Calculator', function () {
                 items: [
                     pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'large', quantity: 2 }),
                     pizza({ name: 'Rustic Rocket and Relish', price: 17.99, size: 'large', quantity: 2 }),
-                    drink({ name: 'Dr Spice Cola', price: 1.99, size: 'bottle', quantity: 2 })
+                    drink({ name: 'Dr Spice Cola', price: 10.99, size: 'bottle', quantity: 2 })
                 ],
                 deliveryMethod: testDeliveryMethod,
                 date: testDate
             });
 
-            expect(results.basketTotal).to.equal(77.94);
+            expect(results.basketTotal).to.equal(95.94);
             expect(results.discount.name).to.equal('Venetian Deal 1');
-            expect(results.discount.amount).to.equal(33.96);
+            expect(results.discount.amount).to.equal(51.96);
             expect(results.totalPayable).to.equal(43.98);
         });
 
@@ -217,17 +217,17 @@ describe('Pizza Delivery Checkout Calculator', function () {
             let results = calculator({
                 items: [
                     pizza({ name: 'Pepperoni Pizzazz', price: 18.99, size: 'large', quantity: 2 }),
-                    drink({ name: 'Dr Spice Cola', price: 1.99, size: 'bottle', quantity: 1 }),
-                    drink({ name: 'Cheapo Cola', price: 0.99, size: 'bottle', quantity: 1 })
+                    drink({ name: 'Dr Spice Cola', price: 10.99, size: 'bottle', quantity: 1 }),
+                    drink({ name: 'Cheapo Cola', price: 10.99, size: 'bottle', quantity: 1 })
                 ],
                 deliveryMethod: testDeliveryMethod,
                 date: testDate
             });
 
-            expect(results.basketTotal).to.equal(40.96);
+            expect(results.basketTotal).to.equal(59.96);
             expect(results.discount.name).to.equal('Venetian Deal 1');
-            expect(results.discount.amount).to.equal(16.98);
-            expect(results.totalPayable).to.equal(23.98);
+            expect(results.discount.amount).to.equal(26.98);
+            expect(results.totalPayable).to.equal(32.98);
         });
 
         it('Extra pizzas should not be discounted and least expensive pizzas should be discounted', () => {
