@@ -4,7 +4,8 @@
   "description": "",
   "main": "",
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha spec/**/*.spec.js *.spec.js --recursive --require mocha-setup.js"
+    "test": "node node_modules/mocha/bin/mocha spec/**/*.spec.js *.spec.js --recursive --require mocha-setup.js",
+    "format": "prettier \"{lib,spec}/**/*.js\" \"*.js\" --write"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
     "chai": "^3.4.1",
     "es6-promise-inspect": "^1.0.4",
     "mocha": "^2.3.4",
+    "prettier": "^1.14.3",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
     "zurvan": "^0.3.0"
