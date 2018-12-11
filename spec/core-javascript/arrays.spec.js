@@ -113,6 +113,11 @@ describe("Arrays", function() {
       expect(array).to.deep.equal([1, 2, 3]);
     });
 
+    it("Given [''] it should return ''", function() {
+      var item = arrays.getItemFromStartOfArray([""]);
+      expect(item).to.equal("");
+    });
+
     it("Given [] it should return null", function() {
       var item = arrays.getItemFromStartOfArray([]);
       expect(item).to.be.null;
@@ -142,6 +147,11 @@ describe("Arrays", function() {
       var item = arrays.getItemFromEndOfArray(array);
       expect(item).to.equal(3);
       expect(array).to.deep.equal([1, 2, 3]);
+    });
+
+    it("Given [''] it should return ''", function() {
+      var item = arrays.getItemFromEndOfArray([""]);
+      expect(item).to.equal("");
     });
 
     it("Given [] it should return null", function() {
@@ -175,6 +185,11 @@ describe("Arrays", function() {
       expect(array).to.deep.equal([2, 3]);
     });
 
+    it("Given [''] it should return ''", function() {
+      var item = arrays.removeItemFromStartOfArray([""]);
+      expect(item).to.equal("");
+    });
+
     it("Given [] it should return null", function() {
       var item = arrays.removeItemFromStartOfArray([]);
       expect(item).to.be.null;
@@ -204,6 +219,11 @@ describe("Arrays", function() {
       var item = arrays.removeItemFromEndOfArray(array);
       expect(item).to.equal(3);
       expect(array).to.deep.equal([1, 2]);
+    });
+
+    it("Given [''] it should return ''", function() {
+      var item = arrays.removeItemFromEndOfArray([""]);
+      expect(item).to.equal("");
     });
 
     it("Given [] it should return null", function() {
