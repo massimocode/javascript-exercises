@@ -18,7 +18,17 @@ function removeInstrumentation(input) {
     .replace(/\$_\$tracer\.log\((.*), '', \d+, \d+\)/gm, "console.log($1)");
 }
 
+function waitForEmptyQueue() {
+  let promise = Promise.resolve();
+  let count = 5;
+  while (count--) {
+    promise = promise.then(() => Promise.resolve());
+  }
+  return promise;
+}
+
 module.exports = {
   exampleFunction,
-  removeInstrumentation
+  removeInstrumentation,
+  waitForEmptyQueue
 };

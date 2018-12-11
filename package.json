@@ -20,10 +20,9 @@
   "devDependencies": {
     "chai": "^3.4.1",
     "es6-promise-inspect": "^2.0.0",
-    "mocha": "^2.3.4",
+    "mocha": "^5.2.0",
     "prettier": "^1.14.3",
     "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0",
-    "zurvan": "^0.3.0"
+    "sinon-chai": "^2.8.0"
   }
 }

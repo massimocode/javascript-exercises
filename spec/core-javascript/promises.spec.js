@@ -3,23 +3,23 @@
 let expect = require("chai").expect;
 let promises = require("../../lib/core-javascript/promises");
 let sinon = require("sinon");
-let zurvan = require("zurvan");
 let utils = require("../../utils");
 let inspect = require("es6-promise-inspect");
 
 describe("Promises", function() {
   let sandbox;
+  let clock;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     sandbox.stub(console, "log");
     sandbox.stub(console, "error");
-    return zurvan.interceptTimers().catch(() => {});
+    clock = sinon.useFakeTimers();
   });
 
   afterEach(() => {
     sandbox.restore();
-    return zurvan.releaseTimers();
+    clock.restore();
   });
 
   describe("Creating promises", function() {
@@ -98,7 +98,7 @@ describe("Promises", function() {
         resolutionHandler,
         rejectionHandler
       );
-      return zurvan.waitForEmptyQueue();
+      return utils.waitForEmptyQueue();
     });
 
     it("It should not return anything", () => {
@@ -123,7 +123,7 @@ describe("Promises", function() {
       describe("And the resolution handler executes without any error and does not return a rejected promise", () => {
         beforeEach(() => {
           resolve(resolutionValue);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should call the resolution handler with the resolution value", () => {
@@ -141,7 +141,7 @@ describe("Promises", function() {
         beforeEach(() => {
           resolutionHandler.throws();
           resolve(resolutionValue);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should call the resolution handler with the resolution value", () => {
@@ -162,7 +162,7 @@ describe("Promises", function() {
       beforeEach(() => {
         rejectionValue = new Error("Some error");
         reject(rejectionValue);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should call the rejection handler with the rejection value", () => {
@@ -195,7 +195,7 @@ describe("Promises", function() {
         resolutionHandler,
         rejectionHandler
       );
-      return zurvan.waitForEmptyQueue();
+      return utils.waitForEmptyQueue();
     });
 
     it("It should not return anything", () => {
@@ -220,7 +220,7 @@ describe("Promises", function() {
       describe("And the resolution handler executes without any error and does not return a rejected promise", () => {
         beforeEach(() => {
           resolve(resolutionValue);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should call the resolution handler with the resolution value", () => {
@@ -243,7 +243,7 @@ describe("Promises", function() {
           );
           resolutionHandler.throws(errorThrown);
           resolve(resolutionValue);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should call the resolution handler with the resolution value", () => {
@@ -264,7 +264,7 @@ describe("Promises", function() {
           rejectionValue = { bar: "456" };
           resolutionHandler.returns(Promise.reject(rejectionValue));
           resolve(resolutionValue);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should call the resolution handler with the resolution value", () => {
@@ -287,7 +287,7 @@ describe("Promises", function() {
       beforeEach(() => {
         rejectionValue = new Error("Some error");
         reject(rejectionValue);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should call the rejection handler with the rejection value", () => {
@@ -309,7 +309,7 @@ describe("Promises", function() {
         return registerUserDeferred.promise;
       });
       promises.exercise1(registerUser);
-      return zurvan.waitForEmptyQueue();
+      return utils.waitForEmptyQueue();
     });
 
     it("It should have registered a user", () => {
@@ -323,7 +323,7 @@ describe("Promises", function() {
     describe("When the user has been registered", () => {
       beforeEach(() => {
         registerUserDeferred.resolve();
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should log a notification to the console", () => {
@@ -341,7 +341,7 @@ describe("Promises", function() {
         return placeOrderDeferred.promise;
       });
       promises.exercise2(placeOrder);
-      return zurvan.waitForEmptyQueue();
+      return utils.waitForEmptyQueue();
     });
 
     it("It should have placed an order", () => {
@@ -358,7 +358,7 @@ describe("Promises", function() {
       beforeEach(() => {
         orderReferenceNumber = "Order Reference Number 12345";
         placeOrderDeferred.resolve(orderReferenceNumber);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should log the order reference number to the console", () => {
@@ -378,7 +378,7 @@ describe("Promises", function() {
         return getDataDeferred.promise;
       });
       promises.exercise3(getData);
-      return zurvan.waitForEmptyQueue();
+      return utils.waitForEmptyQueue();
     });
 
     it('It should have requested data from "someUrl"', () => {
@@ -399,7 +399,7 @@ describe("Promises", function() {
       beforeEach(() => {
         data = { foo: "bar" };
         getDataDeferred.resolve(data);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should log the data to the console", () => {
@@ -417,7 +417,7 @@ describe("Promises", function() {
       beforeEach(() => {
         error = new Error("Could not retrieve data");
         getDataDeferred.reject(error);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should not log anything to the console", () => {
@@ -440,7 +440,7 @@ describe("Promises", function() {
           return getDataDeferred.promise;
         });
         promises.exercise4(getData);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it('It should have requested data from "someUrl"', () => {
@@ -461,7 +461,7 @@ describe("Promises", function() {
         beforeEach(() => {
           data = { foo: "bar" };
           getDataDeferred.resolve(data);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should log the data to the console", () => {
@@ -479,7 +479,7 @@ describe("Promises", function() {
         beforeEach(() => {
           error = new Error("Could not retrieve data");
           getDataDeferred.reject(error);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should not log anything to the console", () => {
@@ -501,7 +501,7 @@ describe("Promises", function() {
           throw error;
         });
         promises.exercise4(getData);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it('It should have requested data from "someUrl"', () => {
@@ -539,7 +539,7 @@ describe("Promises", function() {
           return getDataDeferred.promise;
         });
         promises.exercise5(getData);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it('It should have requested data from "someUrl"', () => {
@@ -560,7 +560,7 @@ describe("Promises", function() {
         beforeEach(() => {
           data = { foo: "bar" };
           getDataDeferred.resolve(data);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should log the data to the console", () => {
@@ -578,7 +578,7 @@ describe("Promises", function() {
         beforeEach(() => {
           error = new Error("Could not retrieve data");
           getDataDeferred.reject(error);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should not log anything to the console", () => {
@@ -600,7 +600,7 @@ describe("Promises", function() {
           throw error;
         });
         promises.exercise5(getData);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it('It should have requested data from "someUrl"', () => {
@@ -630,7 +630,7 @@ describe("Promises", function() {
         return registerUserDeferred.promise;
       });
       promises.exercise6(placeOrder, registerUser);
-      return zurvan.waitForEmptyQueue();
+      return utils.waitForEmptyQueue();
     });
 
     it("It should have placed an order", () => {
@@ -651,7 +651,7 @@ describe("Promises", function() {
       beforeEach(() => {
         orderReferenceNumber = "Order Reference Number 12345";
         placeOrderDeferred.resolve(orderReferenceNumber);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should not log anything to the console", () => {
@@ -664,7 +664,7 @@ describe("Promises", function() {
         beforeEach(() => {
           userId = "User ID 12231221";
           registerUserDeferred.resolve(userId);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should output the message to the console", () => {
@@ -681,7 +681,7 @@ describe("Promises", function() {
       beforeEach(() => {
         userId = "User ID 12231221";
         registerUserDeferred.resolve(userId);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should not log anything to the console", () => {
@@ -694,7 +694,7 @@ describe("Promises", function() {
         beforeEach(() => {
           orderReferenceNumber = "Order Reference Number 12345";
           placeOrderDeferred.resolve(orderReferenceNumber);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should output the message to the console", () => {
@@ -715,7 +715,7 @@ describe("Promises", function() {
         return connectDeferred.promise;
       });
       promises.exercise7(connect);
-      return zurvan.waitForEmptyQueue();
+      return utils.waitForEmptyQueue();
     });
 
     it("It should connect to the database", () => {
@@ -730,7 +730,7 @@ describe("Promises", function() {
       beforeEach(() => {
         errorConnecting = new Error("Server not found");
         connectDeferred.reject(errorConnecting);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should report the error to the console", () => {
@@ -753,7 +753,7 @@ describe("Promises", function() {
           })
         };
         connectDeferred.resolve(connection);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should not report any errors to the console", () => {
@@ -776,7 +776,7 @@ describe("Promises", function() {
         beforeEach(() => {
           errorOpeningDatabase = new Error("Database does not exist");
           openDatabaseDeferred.reject(errorOpeningDatabase);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should report the error to the console", () => {
@@ -801,7 +801,7 @@ describe("Promises", function() {
             })
           };
           openDatabaseDeferred.resolve(database);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should not report any errors to the console", () => {
@@ -825,7 +825,7 @@ describe("Promises", function() {
           beforeEach(() => {
             errorInsertingRecord = new Error("Connection timeout");
             insertRecordDeferred.reject(errorInsertingRecord);
-            return zurvan.waitForEmptyQueue();
+            return utils.waitForEmptyQueue();
           });
 
           it("It should report the error to the console", () => {
@@ -845,7 +845,7 @@ describe("Promises", function() {
           beforeEach(() => {
             recordId = "some_record_id";
             insertRecordDeferred.resolve(recordId);
-            return zurvan.waitForEmptyQueue();
+            return utils.waitForEmptyQueue();
           });
 
           it("It should not report any errors to the console", () => {
@@ -869,7 +869,7 @@ describe("Promises", function() {
         return connectDeferred.promise;
       });
       promises.exercise8(connect);
-      return zurvan.waitForEmptyQueue();
+      return utils.waitForEmptyQueue();
     });
 
     it("It should connect to the database", () => {
@@ -884,7 +884,7 @@ describe("Promises", function() {
       beforeEach(() => {
         errorConnecting = new Error("Server not found");
         connectDeferred.reject(errorConnecting);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should report the error to the console", () => {
@@ -913,7 +913,7 @@ describe("Promises", function() {
           })
         };
         connectDeferred.resolve(connection);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should not report any errors to the console", () => {
@@ -934,7 +934,7 @@ describe("Promises", function() {
         beforeEach(() => {
           errorOpeningDatabase = new Error("Database does not exist");
           openDatabaseDeferred.reject(errorOpeningDatabase);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should report the error to the console", () => {
@@ -970,7 +970,7 @@ describe("Promises", function() {
             })
           };
           openDatabaseDeferred.resolve(database);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should not report any errors to the console", () => {
@@ -995,7 +995,7 @@ describe("Promises", function() {
           beforeEach(() => {
             errorQueryingCollection = new Error("Collection does not exist");
             queryDeferred.reject(errorQueryingCollection);
-            return zurvan.waitForEmptyQueue();
+            return utils.waitForEmptyQueue();
           });
 
           it("It should report the error to the console", () => {
@@ -1031,7 +1031,7 @@ describe("Promises", function() {
               { name: "Tropicrazy", stockLevel: 7 }
             ];
             queryDeferred.resolve(records);
-            return zurvan.waitForEmptyQueue();
+            return utils.waitForEmptyQueue();
           });
 
           it("It should not report any errors to the console", () => {
@@ -1071,7 +1071,7 @@ describe("Promises", function() {
               insertRecordDeferreds["Cola"].reject(errorInsertingRecord);
               insertRecordDeferreds["Fizzy Foo"].resolve(1);
               insertRecordDeferreds["Sweet Shizzle"].resolve(2);
-              return zurvan.waitForEmptyQueue();
+              return utils.waitForEmptyQueue();
             });
 
             it("It should report the error to the console", () => {
@@ -1103,7 +1103,7 @@ describe("Promises", function() {
               errorInsertingRecord = new Error("Connection error");
               insertRecordDeferreds["Fizzy Foo"].reject(errorInsertingRecord);
               insertRecordDeferreds["Sweet Shizzle"].resolve(2);
-              return zurvan.waitForEmptyQueue();
+              return utils.waitForEmptyQueue();
             });
 
             it("It should report the error to the console", () => {
@@ -1142,7 +1142,7 @@ describe("Promises", function() {
               insertRecordDeferreds["Sweet Shizzle"].reject(
                 errorInsertingSweetShizzleRecord
               );
-              return zurvan.waitForEmptyQueue();
+              return utils.waitForEmptyQueue();
             });
 
             it("It should report the Fizzy Foo error to the console", () => {
@@ -1177,7 +1177,7 @@ describe("Promises", function() {
               insertRecordDeferreds["Cola"].resolve(1);
               insertRecordDeferreds["Fizzy Foo"].resolve(2);
               insertRecordDeferreds["Sweet Shizzle"].resolve(3);
-              return zurvan.waitForEmptyQueue();
+              return utils.waitForEmptyQueue();
             });
 
             it("It should not report any errors to the console", () => {
@@ -1208,7 +1208,7 @@ describe("Promises", function() {
               { name: "Tropicrazy", stockLevel: 7 }
             ];
             queryDeferred.resolve(records);
-            return zurvan.waitForEmptyQueue();
+            return utils.waitForEmptyQueue();
           });
 
           it("It should not report any errors to the console", () => {
@@ -1233,7 +1233,7 @@ describe("Promises", function() {
         describe("When the collection was queried successfully and there were no products", () => {
           beforeEach(() => {
             queryDeferred.resolve([]);
-            return zurvan.waitForEmptyQueue();
+            return utils.waitForEmptyQueue();
           });
 
           it("It should not report any errors to the console", () => {
@@ -1267,7 +1267,7 @@ describe("Promises", function() {
         return connectDeferred.promise;
       });
       exercise9Promise = promises.exercise9(connect);
-      return zurvan.waitForEmptyQueue();
+      return utils.waitForEmptyQueue();
     });
 
     it("It should connect to the database", () => {
@@ -1286,7 +1286,7 @@ describe("Promises", function() {
       beforeEach(() => {
         errorConnecting = new Error("Server not found");
         connectDeferred.reject(errorConnecting);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should report the error to the console", () => {
@@ -1315,7 +1315,7 @@ describe("Promises", function() {
           })
         };
         connectDeferred.resolve(connection);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should not report any errors to the console", () => {
@@ -1336,7 +1336,7 @@ describe("Promises", function() {
         beforeEach(() => {
           errorOpeningDatabase = new Error("Database does not exist");
           openDatabaseDeferred.reject(errorOpeningDatabase);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should report the error to the console", () => {
@@ -1374,7 +1374,7 @@ describe("Promises", function() {
             })
           };
           openDatabaseDeferred.resolve(database);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should not report any errors to the console", () => {
@@ -1399,7 +1399,7 @@ describe("Promises", function() {
           beforeEach(() => {
             errorQueryingCollection = new Error("Collection does not exist");
             queryDeferred.reject(errorQueryingCollection);
-            return zurvan.waitForEmptyQueue();
+            return utils.waitForEmptyQueue();
           });
 
           it("It should report the error to the console", () => {
@@ -1437,7 +1437,7 @@ describe("Promises", function() {
               { name: "Tropicrazy", stockLevel: 7 }
             ];
             queryDeferred.resolve(records);
-            return zurvan.waitForEmptyQueue();
+            return utils.waitForEmptyQueue();
           });
 
           it("It should not report any errors to the console", () => {
@@ -1477,7 +1477,7 @@ describe("Promises", function() {
               insertRecordDeferreds["Cola"].reject(errorInsertingRecord);
               insertRecordDeferreds["Fizzy Foo"].resolve(1);
               insertRecordDeferreds["Sweet Shizzle"].resolve(2);
-              return zurvan.waitForEmptyQueue();
+              return utils.waitForEmptyQueue();
             });
 
             it("It should report the error to the console", () => {
@@ -1511,7 +1511,7 @@ describe("Promises", function() {
               errorInsertingRecord = new Error("Connection error");
               insertRecordDeferreds["Fizzy Foo"].reject(errorInsertingRecord);
               insertRecordDeferreds["Sweet Shizzle"].resolve(2);
-              return zurvan.waitForEmptyQueue();
+              return utils.waitForEmptyQueue();
             });
 
             it("It should report the error to the console", () => {
@@ -1552,7 +1552,7 @@ describe("Promises", function() {
               insertRecordDeferreds["Sweet Shizzle"].reject(
                 errorInsertingSweetShizzleRecord
               );
-              return zurvan.waitForEmptyQueue();
+              return utils.waitForEmptyQueue();
             });
 
             it("It should report the Fizzy Foo error to the console", () => {
@@ -1589,7 +1589,7 @@ describe("Promises", function() {
               insertRecordDeferreds["Cola"].resolve(1);
               insertRecordDeferreds["Fizzy Foo"].resolve(2);
               insertRecordDeferreds["Sweet Shizzle"].resolve(3);
-              return zurvan.waitForEmptyQueue();
+              return utils.waitForEmptyQueue();
             });
 
             it("It should not report any errors to the console", () => {
@@ -1620,7 +1620,7 @@ describe("Promises", function() {
               { name: "Tropicrazy", stockLevel: 7 }
             ];
             queryDeferred.resolve(records);
-            return zurvan.waitForEmptyQueue();
+            return utils.waitForEmptyQueue();
           });
 
           it("It should not report any errors to the console", () => {
@@ -1645,7 +1645,7 @@ describe("Promises", function() {
         describe("When the collection was queried successfully and there were no products", () => {
           beforeEach(() => {
             queryDeferred.resolve([]);
-            return zurvan.waitForEmptyQueue();
+            return utils.waitForEmptyQueue();
           });
 
           it("It should not report any errors to the console", () => {
@@ -1679,7 +1679,7 @@ describe("Promises", function() {
         return getDataDeferred.promise;
       });
       promises.exercise10(getData);
-      return zurvan.waitForEmptyQueue();
+      return utils.waitForEmptyQueue();
     });
 
     it('It should have requested data from "someUrl"', () => {
@@ -1700,7 +1700,7 @@ describe("Promises", function() {
       beforeEach(() => {
         data = { foo: "bar" };
         getDataDeferred.resolve(data);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should log the data to the console", () => {
@@ -1715,7 +1715,7 @@ describe("Promises", function() {
         beforeEach(() => {
           console.log.reset();
           console.error.reset();
-          return zurvan.advanceTime(3000);
+          clock.tick(3000);
         });
 
         it("It should not log anything to the console", () => {
@@ -1734,7 +1734,7 @@ describe("Promises", function() {
       beforeEach(() => {
         error = new Error("Could not retrieve data");
         getDataDeferred.reject(error);
-        return zurvan.waitForEmptyQueue();
+        return utils.waitForEmptyQueue();
       });
 
       it("It should not log anything to the console", () => {
@@ -1749,7 +1749,7 @@ describe("Promises", function() {
         beforeEach(() => {
           console.log.reset();
           console.error.reset();
-          return zurvan.advanceTime(3000);
+          clock.tick(3000);
         });
 
         it("It should not log anything to the console", () => {
@@ -1764,7 +1764,8 @@ describe("Promises", function() {
 
     describe("When 3 seconds have passed", () => {
       beforeEach(() => {
-        return zurvan.advanceTime(3000);
+        clock.tick(3000);
+        return utils.waitForEmptyQueue();
       });
 
       it("It should log TIMEOUT to the console", () => {
@@ -1783,7 +1784,7 @@ describe("Promises", function() {
           console.error.reset();
           data = { foo: "bar" };
           getDataDeferred.resolve(data);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should not log anything to the console", () => {
@@ -1803,7 +1804,7 @@ describe("Promises", function() {
           console.error.reset();
           error = new Error("Could not retrieve data");
           getDataDeferred.reject(error);
-          return zurvan.waitForEmptyQueue();
+          return utils.waitForEmptyQueue();
         });
 
         it("It should not log anything to the console", () => {

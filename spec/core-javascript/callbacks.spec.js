@@ -3,21 +3,21 @@
 let expect = require("chai").expect;
 let callbacks = require("../../lib/core-javascript/callbacks");
 let sinon = require("sinon");
-let zurvan = require("zurvan");
 
 describe("Callbacks", () => {
   let sandbox;
+  let clock;
 
   beforeEach(() => {
     sandbox = sinon.sandbox.create();
     sandbox.stub(console, "log");
     sandbox.stub(console, "error");
-    return zurvan.interceptTimers().catch(() => {});
+    clock = sinon.useFakeTimers();
   });
 
   afterEach(() => {
     sandbox.restore();
-    return zurvan.releaseTimers();
+    clock.restore();
   });
 
   describe("Exercise 1 - When registering a user", () => {
@@ -1497,7 +1497,7 @@ describe("Callbacks", () => {
         beforeEach(() => {
           console.log.reset();
           console.error.reset();
-          return zurvan.advanceTime(3000);
+          clock.tick(3000);
         });
 
         it("It should not log anything to the console", () => {
@@ -1530,7 +1530,7 @@ describe("Callbacks", () => {
         beforeEach(() => {
           console.log.reset();
           console.error.reset();
-          return zurvan.advanceTime(3000);
+          clock.tick(3000);
         });
 
         it("It should not log anything to the console", () => {
@@ -1545,7 +1545,7 @@ describe("Callbacks", () => {
 
     describe("When 3 seconds have passed", () => {
       beforeEach(() => {
-        return zurvan.advanceTime(3000);
+        clock.tick(3000);
       });
 
       it("It should log TIMEOUT to the console", () => {
