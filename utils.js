@@ -27,8 +27,18 @@ function waitForEmptyQueue() {
   return promise;
 }
 
+function silenceErrorsFromThen(promise) {
+  const then = promise.then;
+  promise.then = function() {
+    const newPromise = then.apply(this, arguments);
+    newPromise.catch(() => {});
+    return newPromise;
+  };
+}
+
 module.exports = {
   exampleFunction,
   removeInstrumentation,
-  waitForEmptyQueue
+  waitForEmptyQueue,
+  silenceErrorsFromThen
 };

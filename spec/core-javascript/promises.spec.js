@@ -91,6 +91,8 @@ describe("Promises", function() {
         resolve = res;
         reject = rej;
       });
+      promise.catch(() => {});
+      utils.silenceErrorsFromThen(promise);
       resolutionHandler = sinon.stub();
       rejectionHandler = sinon.stub();
       returnValue = promises.forkingPromises(
@@ -188,6 +190,8 @@ describe("Promises", function() {
         resolve = res;
         reject = rej;
       });
+      promise.catch(() => {});
+      utils.silenceErrorsFromThen(promise);
       resolutionHandler = sinon.stub();
       rejectionHandler = sinon.stub();
       returnValue = promises.promiseErrorChaining(
