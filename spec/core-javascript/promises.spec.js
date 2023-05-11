@@ -1271,6 +1271,7 @@ describe("Promises", function() {
         return connectDeferred.promise;
       });
       exercise9Promise = promises.exercise9(connect);
+      exercise9Promise.catch(() => {});
       return utils.waitForEmptyQueue();
     });
 
@@ -1822,3 +1823,5 @@ describe("Promises", function() {
     });
   });
 });
+
+// file.only
